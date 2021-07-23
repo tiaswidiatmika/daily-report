@@ -1,0 +1,264 @@
+/* * what to do:
+* make media query with the lowest possible media, design the smallest first, then move to the highest
+* by so, we can know what style shares general property
+* order the media size, from the highest with "width-min", then in the bottom, the narrowest media with "width-max" */
+
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiko:wght@400;600&display=swap');
+
+:root {
+    --bg-primary: #f2f2f2;
+    --text-primary: #5E5E5E;
+    --transition-speed: 200ms ease;
+    --flat-red: #eb5757;
+    --flat-green: #27ae60;
+    --flat-yellow:#f2c94c;
+    font-family: 'Amiko', sans-serif;
+    color: var(--text-primary);
+    font-size: 16px;
+}
+body {
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    margin: 0;
+    padding: 0;
+    /* width:100vw; */
+    display: flex;
+    flex-direction: column;
+    align-items:flex-start;
+}
+.main-page-container {
+    background: white;
+    box-shadow: 0.1rem 0.1rem 0.1rem 0px #00000040;
+    display: flex;
+    flex-direction: column;
+}
+a {
+    text-decoration: none;
+    color: var(--text-primary);
+}
+nav {
+    box-sizing: border-box;
+    width: 100%;
+    height: 6vh;
+    display: flex;
+    justify-content: space-between;
+    text-decoration: none;
+    background-color: var(--bg-primary);
+    padding: 1rem;
+    padding-right: 20vw;
+    padding-left: 20vw;
+    border-bottom: 1px solid #00000040;
+}
+.left-block {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.logo-sm {
+    width: 3rem;
+}
+.right-block {
+    display: flex;
+    align-items: center;
+}
+.menu-links {
+    text-decoration: none;
+    color: var(--text-primary);
+    margin-right: 1rem;
+    
+}
+a.menu-links:hover {
+    text-decoration: underline;
+    transition: var(--transition-speed);
+}
+.pick-a-section-container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    background: white;
+}
+.single-section-container {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    cursor: pointer;
+}
+.chevron-right {
+    font-size: 1.3rem;
+}
+.section-option {
+    list-style: none;
+}
+/* small screen */
+@media screen and (min-width:320px) and (max-width:752px) {
+    nav {
+        position:fixed;
+        bottom: 0;
+        padding: 0.3rem;
+        height: 11vh;
+    }
+    nav * {
+        color: var(--text-primary);
+        font-size: 0.8rem;
+    }
+    .logo-sm {
+        width: 3rem;
+    }
+    .logo-letter {
+        display: none;
+    }
+    .main-page-title {
+        display: none;
+    }
+    .pick-a-section-container {
+        padding: 2rem;
+    }
+    .chevron-right {
+        display: none;
+    }
+    .arrival-departure-icon {
+        display: none;
+    }
+    .single-section-container span {
+        text-align: center;
+        width: 100%;
+        border-radius: 4px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    #arrival-section span {
+        background-color: var(--flat-red);
+    }
+    #departure-section span {
+        background-color: var(--flat-green);
+    }
+    #formation-section span {
+        background-color: var(--flat-yellow);
+    }
+    .chevron-right {
+        transform: rotate(90deg);
+    }
+    .section-option {
+        border-radius: 4px;
+    }
+    .section-option li {
+        padding: 0.5rem;
+    }
+    
+}
+/* medium screen */
+@media screen and (min-width: 753px) and (max-width:1024px) {
+    nav {
+        height: 10vh;
+    }
+    span.logo-letter {
+        font-size: 0.9rem;
+    }
+    .menu-links {
+        font-size: 0.8rem;
+    }
+    .pick-a-section-container {
+        margin-top: 23%;
+        /* width: 50%; */
+        box-sizing: border-box;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-top: 7vh;
+        margin-bottom:3rem;
+    }
+    .single-section-container {
+        flex-direction: row;
+        margin-bottom: 1rem;
+    }
+    .arrival-departure-icon {
+        margin-right: 0.5rem;
+    }
+    .section-title {
+        width: 10rem;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+    .section-option {
+        display: block;
+        border: 1px solid var(--text-primary);
+        padding: 0;
+        margin-left: 1rem;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+    .section-option li:hover {
+        background-color: #d4d0c5;
+    }
+    .section-option li {
+        padding: 1rem;
+    }
+}
+
+
+/* large screen */
+/* minimum width to occupy this */
+@media screen and (min-width: 1025px){
+    nav {
+        height: 10vh;
+    }
+    .logo-letter {
+        font-size: 0.9rem;
+    }
+    .menu-links {
+        margin-right: 1rem;
+    }
+    .pick-a-section-container {
+        margin-top: 7%;
+        margin-bottom: 5%;
+        /* width: 50%; */
+        border-radius: 10px;
+        padding: 2rem;
+    }
+    .single-section-container {
+        flex-direction: row;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    .arrival-departure-icon {
+        margin-right: 1rem;;
+    }
+    .section-title {
+        width: 10rem;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+    .section-option {
+        position:absolute;
+        display: block;
+        position:absolute;
+        right: -20vw;
+        background: white;
+        box-shadow: 1px 2px 2px;
+        border: 1px solid var(--text-primary);
+        padding: 0;
+        margin-left: 1rem;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+    .section-option li:hover {
+        background-color: #d4d0c5;
+        border-radius: 10px;
+    }
+    .section-option li {
+        padding: 1rem;
+    }
+    
+}
+
+/*     320px — 480px: Mobile devices
+    481px — 768px: iPads, Tablets
+    769px — 1024px: Small screens, laptops
+    1025px — 1200px: Desktops, large screens
+    1201px and more —  Extra large screens, TV */
+/* tablets */
+/* small screens */
+/* desktop/large screens */
+/* extra large screen */
