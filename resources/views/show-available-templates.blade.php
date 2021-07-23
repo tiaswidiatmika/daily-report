@@ -17,8 +17,8 @@
     <div class="main-page-container">
         <input type="text" class="search-template-name" name="search-template" id="search-template" placeholder="..search template">
         <!-- template items start here -->
-        @if ( $templateList->isNotEmpty() )
-            @foreach ( $templateList as $key => $template )
+        @if ( $availableTemplates->isNotEmpty() )
+            @foreach ( $availableTemplates as $key => $template )
             <span class="template-items-container">
                 <a 
                 href="{{ route('use-template', [

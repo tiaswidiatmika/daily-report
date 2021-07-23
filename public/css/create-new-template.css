@@ -7,7 +7,7 @@ textarea {
 form.main-page-container {
     box-shadow: 0rem .5rem 0.5rem 0rem #00000040;
 }
-form.main-page-container p {
+.page-title {
     font-weight: 800;
     margin-left: auto;
     border-bottom: 1px solid #00000040;
@@ -24,8 +24,16 @@ form.main-page-container p {
     label:nth-child(1) {
         margin-top: 2rem;
     }
-    button[type="submit"] {
+    button {
         margin-top: 1rem;
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+        border-radius: 10px;
+        background: var(--flat-blue-primary);
+        color: white;
+    }
+    button:hover {
+        background: var(--flat-blue-secondary);
     }
     input, textarea {
         border: 1px solid var(--text-primary);
@@ -36,5 +44,8 @@ form.main-page-container p {
     }
     label {
         font-size: 0.8rem;
+    }
+    .alert-text {
+        font-size: 0.7rem;
     }
 }

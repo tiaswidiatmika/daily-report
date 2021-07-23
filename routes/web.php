@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\TemplateController;
 
 /*
@@ -17,10 +18,15 @@ use App\Http\Controllers\TemplateController;
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
-// * some route for "template"
+// * create new template
 Route::get('create-template', [TemplateController::class, 'create'])->name('create-new-template');
+Route::post('create-template', [TemplateController::class, 'store'])->name('store-newly-created-template');
+
+// * create from EXISTING template
 Route::get('create-from-template', [TemplateController::class, 'index'])
     ->name('create-from-template');
+Route::post('create-from-template', [PostController::class, 'storeFromTemplate']);
+
 Route::get('/create-from-template/{id}', [TemplateController::class, 'createFromTemplate'] )
     ->name('use-template');
 // * end route for "template"

@@ -1,0 +1,8 @@
+#attachment-group {
+    display: none;
+    flex-direction: column;
+}
+/* label[for="attachment_title"], input[name="attachment_title"], label[for="image[]"], input[name="image[]"] {
+    width: inherit;
+    height: inherit;
+} */

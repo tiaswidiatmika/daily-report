@@ -15,9 +15,9 @@ class TemplateController extends Controller
     public function index(Request $request)
     {
         $ref = $request->query('ref'); //ref can be 'arrival', 'departure', 'selatan',
-        $templateList = Template::all();
+        $availableTemplates = Template::all();
         return view('show-available-templates', [
-            'templateList' => $templateList,
+            'availableTemplates' => $availableTemplates,
         ])->with(compact('ref'));
     }
 
@@ -50,7 +50,7 @@ class TemplateController extends Controller
         
         Template::create($validated);
         
-        return redirect('/create');
+        return redirect()->route('dashboard');
     }
 
     public function createFromTemplate(Request $request, $id)
@@ -58,7 +58,7 @@ class TemplateController extends Controller
         $ref = $request->query('ref');
         $template = Template::find($id);
         $inputs = $template->setupInputs();
-        return view('livewire.templates.inputs-components', [
+        return view('create-from-template-form', [
             'template' => $template,
             'inputNames' => $inputs,
         ])->with(compact('ref'));
