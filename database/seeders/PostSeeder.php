@@ -20,63 +20,12 @@ class PostSeeder extends Seeder
         Post::create([
             'section' => 'arrival',
             'user_id' => 1,
-            'title' =>
-                "<table class='inner-table-none'>
-                    <tr>
-                    <td>Hari / Tanggal</td>
-                    <td>:</td>
-                    <td class='p-1'>{$date}</td>
-                    </tr>
-                
-                    <tr>
-                    <td>Waktu</td>
-                    <td>:</td>
-                    <td class='p-1'>12:69—69:12 WIN</td>
-                    </tr>
-                
-                    <tr>
-                    <td>Tempat</td>
-                    <td>:</td>
-                    <td class='p-1'>Keberangkatan Internasional
-                    TPI Ngurah Rai</td>
-                    </tr>
-                </table>",
-            'case' => "
-                <p>Telah dilakukan
-                Pengawasan
-                Keberangkatan terhadap 3
-                (Tiga) orang kru stay on
-                board Pesawat CI 2771
-                dengan rute penerbangan
-                Denpasar-Taipei</p>",
-            'summary' => "
-                <p>
-                    <b><u>Uraian Singkat Kejadian: </u></b>
-                </p>
-                <p>Bahwa, pada hari, tanggal tersebut di atas dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei</p>
-
-            ",
-            'chronology' => "
-                <p>
-                    <b><u>Kronologis: </u></b>
-                </p>
-                <p>Pengawasan Keberangkatan terhadap 3 (Tiga) orang
-                kru stay on board Pesawat CI 2771 dengan rute
-                penerbangan Denpasar-Taipei dilakukan pada pukul
-                13.40 WITA</p>",
-            'measure' => "
-                <p>
-                    <b><u>Tindakan yang telah diambil: </u></b>
-                </p>
-                <p>Melaporkan kejadian tersebut pada pimpinan</p>",
-            'conclusion' => "
-                <p>
-                    <b><u>Kesimpulan: </u></b>
-                </p>
-                <p>Bahwa telah dilakukan Pengawasan Keberangkatan
-                    terhadap 3 (Tiga) orang kru stay on board Pesawat CI
-                    2771 dengan rute penerbangan Denpasar-Taipei.
-                </p>",
+            'title' => $date,
+            'case' => "Telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei",
+            'summary' => "Bahwa, pada hari, tanggal tersebut di atas dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei",
+            'chronology' => "Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei dilakukan pada pukul 13.40 WITA</p>",
+            'measure' => "Melaporkan kejadian tersebut pada pimpinan. Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.",
+            'conclusion' => "Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.",
             'tanggal_nesia' => 'Senin 31 Februari 2021'
         ]);
     }
