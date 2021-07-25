@@ -8,6 +8,7 @@ use App\Models\Attachment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AttachmentUploadController;
 use App\Http\Requests\StorePostRequest as StorePost;
+use PDF;
 
 class PostController extends Controller
 {
@@ -74,7 +75,7 @@ class PostController extends Controller
         foreach ($post as $attribute => $value) {
             switch ($attribute) {
                 case 'title':
-                    $post['title'] = "<table>
+                    $post['title'] = "<table class='inner-table-none'>
                     <tr>
                     <td>Hari / Tanggal</td>
                     <td>:</td>
@@ -185,39 +186,10 @@ class PostController extends Controller
         );
         AttachmentUploadController::store($request, $post->id);
 
-        return view('post.show-post', [
+        return view('report', [
             'post' => $post,
             'attachment' => $post->attachments()->where('post_id', '=', $post->id)->first()
         ]);
-    }
-    
-    public function storeBak(StorePost $request)
-    {
-        /*
-         * main post builder
-         *=====================================================*/
-        $postData = $request->validated(); //has title and body
-        $fileData = array_splice($postData, -4); // has everything but title and body
-        
-        $post = auth()->user()->posts()->create([
-            'user_id' => auth()->user()->id
-            ] + $postData
-        );
-
-        $attachment = $post->attachments()->create([
-            'title' => $fileData['attachment_title'],
-            'post_id' => $post->id,
-            'category' => $fileData['category'],
-            'path' => $fileData['path'],
-        ]);
-
-        /*
-         * main post builder
-         *=====================================================*/
-
-        if ($post && $attachment) {
-            return back();
-        }
     }
 
     /**
@@ -228,7 +200,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        return view('post.show-post',[
+        return view('report',[
             'post' => Post::find($id)
         ]);
     }
@@ -267,4 +239,11 @@ class PostController extends Controller
         //
     }
 
+    public function showPdf($id)
+    {
+        $post = Post::find($id);
+        $pdf = PDF::loadView('report', compact('post'));
+        // return $pdf->download('report.pdf');
+        return $pdf->download('invoice.pdf');
+    }
 }

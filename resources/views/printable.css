@@ -1,0 +1,11 @@
+@media print {
+    body {
+        visibility: hidden;
+        position: relative;
+    }
+    .page {
+        position: absolute;
+        width: 210mm;
+        height: 297mm;
+    }
+}

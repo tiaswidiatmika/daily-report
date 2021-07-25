@@ -15,23 +15,23 @@ class PostSeeder extends Seeder
      */
     public function run()
     {
-        $date = strtoupper(Carbon::parse(Carbon::now()->locale('id'))->format('D, d F Y'));
+        $date = ucfirst(Carbon::parse(Carbon::now()->locale('id'))->format('D, d F Y'));
         // protected $fillable = ['user_id','title', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
         Post::create([
             'section' => 'arrival',
             'user_id' => 1,
             'title' =>
-                "<table>
+                "<table class='inner-table-none'>
                     <tr>
                     <td>Hari / Tanggal</td>
                     <td>:</td>
-                    <td class='p-1'></td>
+                    <td class='p-1'>{$date}</td>
                     </tr>
                 
                     <tr>
                     <td>Waktu</td>
                     <td>:</td>
-                    <td class='p-1'>{$date}</td>
+                    <td class='p-1'>12:69—69:12 WIN</td>
                     </tr>
                 
                     <tr>
@@ -77,7 +77,7 @@ class PostSeeder extends Seeder
                     terhadap 3 (Tiga) orang kru stay on board Pesawat CI
                     2771 dengan rute penerbangan Denpasar-Taipei.
                 </p>",
-            'tanggal_nesia' => 'Senin, 31 Februari 2021'
+            'tanggal_nesia' => 'Senin 31 Februari 2021'
         ]);
     }
 }

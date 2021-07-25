@@ -30,3 +30,10 @@ Route::post('create-from-template', [PostController::class, 'storeFromTemplate']
 Route::get('/create-from-template/{id}', [TemplateController::class, 'createFromTemplate'] )
     ->name('use-template');
 // * end route for "template"
+
+// * POSTINGAN | REPORT
+Route::get('report/{id}', [PostController::class, 'show'])
+    ->name('show-post');
+Route::get('report/show-pdf/{id}', [PostController::class, 'showPdf'])
+    ->name('show-pdf');
+    
