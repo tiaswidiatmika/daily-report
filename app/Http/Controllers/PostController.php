@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\AttachmentUploadController;
 use App\Models\Post;
 use App\Models\Template;
-use App\Models\Attachment;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AttachmentUploadController;
-use App\Http\Requests\StorePostRequest as StorePost;
 use PDF;
 
 class PostController extends Controller
@@ -33,7 +35,7 @@ class PostController extends Controller
         foreach ($collumnsToFill as $tableCollumn) {
             $sentence = $template->$tableCollumn;
             foreach ($inputs as $input) {
-                $pattern = '/\[' . $input .'\]/';
+                $pattern = '/\[' . $input . '\]/';
                 $input = preg_replace('/\s/', '_', $input);
                 $sentence = preg_replace($pattern, $request->$input, $sentence);
             }
@@ -41,7 +43,7 @@ class PostController extends Controller
         }
         return $container;
 
-    } 
+    }
 
     public function htmlMarkup($post)
     {
@@ -58,7 +60,7 @@ class PostController extends Controller
             '09' => 'September',
             '10' => 'Oktober',
             '11' => 'November',
-            '12' => 'Desember'
+            '12' => 'Desember',
         ];
 
         $translateDays = [
@@ -68,7 +70,7 @@ class PostController extends Controller
             'Wed' => 'Rabu',
             'Thu' => 'Kamis',
             'Fri' => "Jum'at",
-            'Sat' => 'Sabtu'
+            'Sat' => 'Sabtu',
         ];
         $post['title'] = '';
         $post['tanggal_nesia'] = "{$translateDays[$date->format('D')]}, {$date->format('d')} {$translateMonths[$date->format('m')]} {$date->format('Y')}";
@@ -83,13 +85,13 @@ class PostController extends Controller
                         {$post['tanggal_nesia']}
                     </td>
                     </tr>
-                
+
                     <tr>
                     <td>Waktu</td>
                     <td>:</td>
                     <td class='p-1'>12.00 Wita</td>
                     </tr>
-                
+
                     <tr>
                     <td>Tempat</td>
                     <td>:</td>
@@ -98,27 +100,27 @@ class PostController extends Controller
                     </tr>
                 </table>";
                     break;
-                
+
                 case 'case':
-                    $post['case']= "<p>{$value}</p>";
+                    $post['case'] = "<p>{$value}</p>";
                     break;
-                
+
                 case 'summary':
-                    $post['summary']= "<p>
+                    $post['summary'] = "<p>
                                 <b><u>Uraian Singkat Kejadian: </u></b>
                             </p>
                             <p>{$value}</p>";
                     break;
 
                 case 'chronology':
-                    $post['chronology']= "
+                    $post['chronology'] = "
                         <p>
                             <b><u>Kronologis: </u></b>
                         </p>
                         <p>{$value}</p>";
                     break;
-                
-                case 'measure' :
+
+                case 'measure':
                     $post['measure'] = "
                     <p>
                         <b><u>Tindakan yang telah diambil: </u></b>
@@ -126,7 +128,7 @@ class PostController extends Controller
                     <p>{$value}</p>";
                     break;
 
-                case 'conclusion' :
+                case 'conclusion':
                     $post['conclusion'] = "
                     <p>
                         <b><u>Kesimpulan: </u></b>
@@ -134,7 +136,6 @@ class PostController extends Controller
                     <p>{$value}
                     </p>";
                     break;
-
 
                 default:
                     # code...
@@ -147,7 +148,7 @@ class PostController extends Controller
     {
         // view all posts by all user in descending order
         return Post::all()->sortByDesc('created_at');
-        
+
     }
 
     /**
@@ -173,7 +174,7 @@ class PostController extends Controller
 
     public function storeFromTemplate(Request $request)
     {
-        
+
         $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
         // protected $fillable = ['user_id','title', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'tanggal_nesia'];
         $newPost = $this->htmlMarkup($newPost);
@@ -181,14 +182,14 @@ class PostController extends Controller
         $post = Post::create(
             [
                 'section' => $request->ref,
-                'user_id' => 1
+                'user_id' => 1,
             ] + $newPost
         );
         AttachmentUploadController::store($request, $post->id);
 
         return view('report', [
             'post' => $post,
-            'attachment' => $post->attachments()->where('post_id', '=', $post->id)->first()
+            'attachment' => $post->attachments()->where('post_id', '=', $post->id)->first(),
         ]);
     }
 
@@ -200,8 +201,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        return view('report',[
-            'post' => Post::find($id)
+        return view('report', [
+            'post' => Post::find($id),
         ]);
     }
 
@@ -242,8 +243,19 @@ class PostController extends Controller
     public function showPdf($id)
     {
         $post = Post::find($id);
-        $pdf = PDF::loadView('report', compact('post'));
-        // return $pdf->download('report.pdf');
-        return $pdf->download('invoice.pdf');
+        $qr = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data(route('show-post', ['id' => $id]))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(300)
+            ->margin(0)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->build()
+            ->getDataUri();
+
+        $pdf = PDF::loadView('pdf-report', compact('post', 'qr'));
+
+        return $pdf->stream('report.pdf');
     }
 }
