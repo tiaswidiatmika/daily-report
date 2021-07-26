@@ -13,8 +13,6 @@
 @section('jsfiles')
     <script src="{{ asset('js/create-from-template-form.js') }}" defer></script>
 @endsection
-add-attachments-button -> label label attachment_files
-
 
 @section('content')
 
@@ -48,7 +46,6 @@ add-attachments-button -> label label attachment_files
                 class=""
                 type="text" name="attachment_title"
             >
-
             <label 
                 class=""
                 for="image[]">add photo</label>
@@ -60,7 +57,6 @@ add-attachments-button -> label label attachment_files
                 multiple
             >
         </span>
-        
         {{-- add attachments end --}}
 
         <button type="submit"

@@ -77,64 +77,27 @@ class PostController extends Controller
         foreach ($post as $attribute => $value) {
             switch ($attribute) {
                 case 'title':
-                    $post['title'] = "<table class='inner-table-none'>
-                    <tr>
-                    <td>Hari / Tanggal</td>
-                    <td>:</td>
-                    <td class='p-1'>
-                        {$post['tanggal_nesia']}
-                    </td>
-                    </tr>
-
-                    <tr>
-                    <td>Waktu</td>
-                    <td>:</td>
-                    <td class='p-1'>12.00 Wita</td>
-                    </tr>
-
-                    <tr>
-                    <td>Tempat</td>
-                    <td>:</td>
-                    <td class='p-1'>Keberangkatan Internasional
-                    TPI Ngurah Rai</td>
-                    </tr>
-                </table>";
+                    $post['title'] = $post['tanggal_nesia'];
                     break;
 
                 case 'case':
-                    $post['case'] = "<p>{$value}</p>";
+                    $post['case'] = "$value";
                     break;
 
                 case 'summary':
-                    $post['summary'] = "<p>
-                                <b><u>Uraian Singkat Kejadian: </u></b>
-                            </p>
-                            <p>{$value}</p>";
+                    $post['summary'] = "$value";
                     break;
 
                 case 'chronology':
-                    $post['chronology'] = "
-                        <p>
-                            <b><u>Kronologis: </u></b>
-                        </p>
-                        <p>{$value}</p>";
+                    $post['chronology'] = $value;
                     break;
 
                 case 'measure':
-                    $post['measure'] = "
-                    <p>
-                        <b><u>Tindakan yang telah diambil: </u></b>
-                    </p>
-                    <p>{$value}</p>";
+                    $post['measure'] = $value;
                     break;
 
                 case 'conclusion':
-                    $post['conclusion'] = "
-                    <p>
-                        <b><u>Kesimpulan: </u></b>
-                    </p>
-                    <p>{$value}
-                    </p>";
+                    $post['conclusion'] = $value;
                     break;
 
                 default:
@@ -186,11 +149,21 @@ class PostController extends Controller
             ] + $newPost
         );
         AttachmentUploadController::store($request, $post->id);
-
-        return view('report', [
+        $qr = $this->buildQrCode( $post->id );
+        return view ( 'single-report', [
             'post' => $post,
-            'attachment' => $post->attachments()->where('post_id', '=', $post->id)->first(),
-        ]);
+            'qr' => $qr,
+            'attachment' => $post->attachments()
+                ->where('post_id', '=', $post->id)
+                ->first(),
+        ] );
+        // * this view using the old template to show report
+        // * before using dompdf
+
+        // return view('report', [
+        //     'post' => $post,
+        //     'attachment' => $post->attachments()->where('post_id', '=', $post->id)->first(),
+        // ]);
     }
 
     /**
@@ -243,19 +216,25 @@ class PostController extends Controller
     public function showPdf($id)
     {
         $post = Post::find($id);
+        $qr = $this->buildQrCode( $post->id );
+        
+        $pdf = PDF::loadView('single-report', compact('post', 'qr'));
+
+        return $pdf->stream('report.pdf');
+    }
+
+    public function buildQrCode ($postId)
+    {
         $qr = Builder::create()
             ->writer(new PngWriter())
             ->writerOptions([])
-            ->data(route('show-post', ['id' => $id]))
+            ->data(route('show-post', ['id' => $postId]))
             ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
             ->size(300)
             ->margin(0)
             ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
             ->build()
             ->getDataUri();
-
-        $pdf = PDF::loadView('pdf-report', compact('post', 'qr'));
-
-        return $pdf->stream('report.pdf');
+        return $qr;
     }
 }

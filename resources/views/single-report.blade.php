@@ -6,10 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" type="image/jpg" href="{{ asset('logo.png') }}"/>
     <style>
-        /* table.border, table.border tr, table.border th, table.border td {
-            border: 1px solid;
-            border-collapse: collapse;
-        } */
+        body {
+            width: 210mm;
+            height: 297mm;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            padding: 1rem;
+        }
         table.border, table.border th {
             border: 1px solid;
             border-collapse: collapse;
@@ -33,9 +41,7 @@
             border: none;
             padding: 0.2rem;
         }
-        /* table.border tr:not(:first-child) td table tr td {
-            border: none;
-        } */
+    
         .border-bottom {
             border-bottom: 2px solid;
             padding-bottom: 2px;
@@ -57,13 +63,25 @@
             font-size: 0.8rem;
         }
         .float-left {
-            margin-left: 25rem;
+            margin-right: auto;
         }
+        .float-right {
+            margin-left: auto;
+        }
+        .w-100percent {
+            width: 100%;
+        }
+        .h-100percent {
+            height: 100%;
+        }
+        .ml-10cm {
+            margin-left: 10cm;
+        }        
     </style>
     <title>Single Report</title>
 </head>
 <body>
-    <table class="no-border">
+    <table class="no-border float-left">
         <tr>
             <td>
                 <img src="media/logo-kemenkumham.jpg" alt="" class="logo-sm">
@@ -79,7 +97,7 @@
         </tr>
     </table>
 
-    <p class="text-bold text-center">
+    <p class="text-bold text-center w-100percent">
         KEMENTERIAN HUKUM DAN HAK ASASI MANUSIA<br>
         KANTOR WILAYAH BALI<br>
         KANTOR IMIGRASI KELAS I KHUSUS TPI NGURAH RAI
@@ -89,13 +107,13 @@
         Telepon/Faksimili: 0361-9551038,0361-8568395/0361-9357011<br>
         Laman: www.ngurahrai.imigrasi.go.id, Email: kanim_ngurahrai@imigrasi.go.id<br>
     </p>
-    <p class="float-left">
+    <p class="float-right">
         Kepada Yth.<br>
         Kepala Kantor Imigrasi<br>
         Kelas I Khusus TPI Ngurah Rai
     </p>
 
-    <table class="border">
+    <table class="border w-100percent">
         <tr>
             <th>No.</th>
             <th>
@@ -172,7 +190,21 @@
             </td>
         </tr>
     </table>
-    <p style="page-break-after: always;">
+    <p style="margin-left: 10cm;">
+        Badung, {{ $post->tanggal_nesia }} <br />
+        Kepala Seksi Pemeriksaan IV
+        <br>
+        <img class="block" src="{{ $qr }}" alt="" style="width: 100px;"><br>
+        Ahmad Ghazali <br />
+        NIP. 19870303 200701 1 003 <br />
+    </p>
+    
+    <p class="float-left">
+        Tembusan: <br />
+        1. Kepala Bidang Tempat Pemeriksaan Imigrasi (sebagai laporan);<br />
+        2. Kepala Bidang Intelijen dan Penindakan Keimigrasian;<br />
+        3. Kepala Bidang Teknologi Informasi dan Komunikasi Keimigrasian
+    </p>
     
 </body>
 </html>
