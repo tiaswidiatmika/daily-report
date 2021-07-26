@@ -10,9 +10,10 @@ class AttachmentUploadController extends Controller
 {
     public static function store (Request $request, $postId)
     {
-        // dd($request->all());
     // protected $fillable = ['title','post_id', 'category', 'path'];
-
+        if ( $request->image == null ) {
+            return;
+        }
         $request->validate([
             'image.*' => 'mimes:jpg,jpeg,png,bmp'
         ]);
@@ -37,18 +38,4 @@ class AttachmentUploadController extends Controller
         }
     }
 
-    public function storeBak(Request $request)
-    {
-        $file = $request->file('attachment');
-        $file = $file->attachment;
-        dd($file);
-        // echo $request->attachment->originalName;
-        $filePath = $request->file('attachment')->store('tesfolder');
-        $attachment = Attachment::create([
-            'post_id' => $request('post_id'),
-            'title' => $request('title'),
-            ''
-        ]);
-        
-    }
 }
