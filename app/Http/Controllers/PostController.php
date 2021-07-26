@@ -155,7 +155,7 @@ class PostController extends Controller
             'qr' => $qr,
             'attachment' => $post->attachments()
                 ->where('post_id', '=', $post->id)
-                ->first(),
+                ->get(),
         ] );
         // * this view using the old template to show report
         // * before using dompdf
@@ -174,9 +174,13 @@ class PostController extends Controller
      */
     public function show($id)
     {
+        $post = Post::find( $id );
         return view('single-report', [
-            'post' => Post::find( $id ),
-            'qr' => $this->buildQrCode( $id )
+            'post' => $post,
+            'qr' => $this->buildQrCode( $id ),
+            'attachment' => $post->attachments()
+                ->where('post_id', '=', $post->id)
+                ->get(),
         ]);
     }
 

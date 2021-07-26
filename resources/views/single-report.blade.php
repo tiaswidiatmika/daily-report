@@ -8,7 +8,6 @@
     <style>
         body {
             width: 210mm;
-            height: 297mm;
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;
@@ -113,6 +112,8 @@
         Kelas I Khusus TPI Ngurah Rai
     </p>
 
+    <p><b><u>LAPORAN KHUSUS / ATENSI PIMPINAN</u></b></p>
+
     <table class="border w-100percent">
         <tr>
             <th>No.</th>
@@ -205,6 +206,13 @@
         2. Kepala Bidang Intelijen dan Penindakan Keimigrasian;<br />
         3. Kepala Bidang Teknologi Informasi dan Komunikasi Keimigrasian
     </p>
-    
+    <p style="page-break-after: always;"></p>
+    {{-- attachment --}}
+    <p><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p>
+    @foreach ($attachment as $item)
+        <img class="block" src="{{ '/attachments\/' . $item->path }}" alt="" srcset="">
+    @endforeach
+    {{-- </div> --}}
+
 </body>
 </html>

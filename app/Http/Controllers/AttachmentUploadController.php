@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Attachment;
+use Illuminate\Support\Str;
 // use App\Http\Requests\StoreAttachmentRequest as ValidateAttachment;
 
 class AttachmentUploadController extends Controller
@@ -25,7 +26,7 @@ class AttachmentUploadController extends Controller
         $files = $request->file('image');
         if($files !== []) {
             foreach($files as $file) {
-                $imageName = time() . 'report-id-' . $postId . '.' . $file->extension();
+                $imageName = 'Riksa 4 Daily Report - ' . Str::random(12) . time() . 'report-id-' . $postId . '.' . $file->extension();
                 $file->move(public_path('attachments'), $imageName);
                 Attachment::create([
                     'title' => $attachmentTitle,
