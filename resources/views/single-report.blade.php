@@ -84,9 +84,9 @@
     <table class="no-border float-left">
         <tr>
             <td>
-                <img src="media/logo-kemenkumham.jpg" alt="" class="logo-sm">
+                <img src="/media/logo-kemenkumham.jpg" alt="" class="logo-sm">
             </td>
-            <td><img class="logo-sm" src="media/logo-imigrasi.png" alt="logo ini" srcset=""></td>
+            <td><img class="logo-sm" src="/media/logo-imigrasi.png" alt="logo ini" srcset=""></td>
             <td>
                 <p class="font-sm">
                     Kantor Imigrasi Kelas I Khusus TPI Ngurah Rai<br>

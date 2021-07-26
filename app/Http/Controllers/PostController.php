@@ -174,8 +174,9 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        return view('report', [
-            'post' => Post::find($id),
+        return view('single-report', [
+            'post' => Post::find( $id ),
+            'qr' => $this->buildQrCode( $id )
         ]);
     }
 
