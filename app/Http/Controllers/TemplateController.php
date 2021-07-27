@@ -14,6 +14,7 @@ class TemplateController extends Controller
      */
     public function index(Request $request)
     {
+        // * show list of available templates
         $ref = $request->query('ref'); //ref can be 'arrival', 'departure', 'selatan',
         $availableTemplates = Template::all();
         return view('show-available-templates', [
@@ -26,9 +27,11 @@ class TemplateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('create-new-template');
+        $ref = $request->query('ref');
+        return view('create-new-template')
+            ->with(compact('ref'));
     }
 
     /**
@@ -49,8 +52,10 @@ class TemplateController extends Controller
         ]);
         
         Template::create($validated);
-        
-        return redirect()->route('dashboard');
+        $ref = $request->query('ref');
+        // ddd($ref);
+        return redirect()
+            ->route('available-templates', ['ref' => $ref]);
     }
 
     public function createFromTemplate(Request $request, $id)
@@ -61,6 +66,7 @@ class TemplateController extends Controller
         return view('create-from-template-form', [
             'template' => $template,
             'inputNames' => $inputs,
+            'id' => $id
         ])->with(compact('ref'));
             // sebenernya bisa aja sih gak pake with, pake di array parameter kedua view
             // jadinya 'ref' => $ref

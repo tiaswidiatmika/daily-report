@@ -131,17 +131,17 @@
                     <tr>
                         <td>Hari / Tanggal</td>
                         <td>:</td>
-                        <td>{{ $post->title }}</td>
+                        <td>{{ $post->date }}</td>
                     </tr>
                     <tr>
                         <td>Waktu</td>
                         <td>:</td>
-                        <td>12:69 - 69:12 WIN</td>
+                        <td>{{ $post->time }}</td>
                     </tr>
                     <tr>
                         <td>Tempat</td>
                         <td>:</td>
-                        <td>{{ $post->section }}</td>
+                        <td>{{ ucfirst($post->section) }}</td>
                     </tr>   
                 </table>
             </td>
@@ -206,12 +206,14 @@
         2. Kepala Bidang Intelijen dan Penindakan Keimigrasian;<br />
         3. Kepala Bidang Teknologi Informasi dan Komunikasi Keimigrasian
     </p>
-    <p style="page-break-after: always;"></p>
     {{-- attachment --}}
-    <p><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p>
-    @foreach ($attachment as $item)
-        <img class="block" src="{{ '/attachments\/' . $item->path }}" alt="" srcset="">
-    @endforeach
+    @if ($attachment->isNotEmpty())
+        <p style="page-break-after: always;"></p>
+        <p><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p>
+        @foreach ($attachment as $item)
+            <img class="block" src="{{ '/attachments\/' . $item->path }}" alt="" srcset="">
+        @endforeach
+    @endif
     {{-- </div> --}}
 
 </body>

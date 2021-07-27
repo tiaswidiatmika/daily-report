@@ -18,7 +18,7 @@
 
     <form
         class="main-page-container"
-        action="{{ route('create-from-template') }}" method="post"
+        action="{{ route('store-post-from-template', ['id' => $id]) }}" method="post"
         enctype="multipart/form-data"
     >
         @csrf
@@ -31,9 +31,32 @@
                 class=""
                 type="text" name="{{ $input }}"
             >
+            <x-alert-validate-request attribute="{{ $input }}" />
         @endforeach
-
-        <input type="hidden" name="ref" value="{{ $ref }}">
+        <label 
+                class=""
+                for="date">Tanggal</label>
+            <input 
+                class=""
+                type="text" name="date"
+                value="{{ \Carbon\Carbon::now()->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}"
+        >
+        <label 
+                class=""
+                for="time">Waktu</label>
+            <input 
+                class=""
+                type="text" name="time"
+                value="{{ \Carbon\Carbon::now('Asia/Shanghai')->locale('id')->format('h:i') . ' - ' . \Carbon\Carbon::now('Asia/Shanghai')->locale('id')->addHour(1)->format('h:i') . ' WITA'}}"
+        >
+        <label 
+                class=""
+                for="ref">Section</label>
+            <input 
+                class=""
+                type="text" name="ref"
+                value="{{ 'Terminal ' . ucfirst( $ref ) . ' Bandar Udara Ngurah Ray' }}"
+        >
         <input type="hidden" name="templateId" value="{{ $template->id }}">
 
         {{-- add attachments start --}}

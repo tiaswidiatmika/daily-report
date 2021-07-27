@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\AttachmentUploadController;
+use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\Template;
 use Endroid\QrCode\Builder\Builder;
@@ -11,6 +12,8 @@ use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\Request;
 use PDF;
+
+use function PHPSTORM_META\map;
 
 class PostController extends Controller
 {
@@ -28,18 +31,28 @@ class PostController extends Controller
     public function interpolateStringFromTemplate($templateId, $request)
     {
         $template = Template::find($templateId);
-        $collumnsToFill = $template->getFillables();
+        $columnsToFill = $template->getFillables();
+        
         $inputs = $template->setupInputs();
         $container = [];
-
-        foreach ($collumnsToFill as $tableCollumn) {
-            $sentence = $template->$tableCollumn;
+        
+        // * get dynamic columns from template model method 'setupInputs()'
+        // * make a new variable to hold the specified resource, but using collect()
+        // * iterate through new variable, modify each value using key => value, 
+        // * key => value is item => 'required'
+        $tryToValidate = collect( $inputs )->mapWithKeys( function($item) {
+            return [$item => 'required'];
+        } )->toArray();
+        $validated = $request->validate( $tryToValidate );
+        
+        foreach ($columnsToFill as $tableColumn) {
+            $sentence = $template->$tableColumn;
             foreach ($inputs as $input) {
                 $pattern = '/\[' . $input . '\]/';
                 $input = preg_replace('/\s/', '_', $input);
                 $sentence = preg_replace($pattern, $request->$input, $sentence);
             }
-            $container[$tableCollumn] = $sentence;
+            $container[$tableColumn] = $sentence;
         }
         return $container;
 
@@ -137,17 +150,17 @@ class PostController extends Controller
 
     public function storeFromTemplate(Request $request)
     {
-
         $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
-        // protected $fillable = ['user_id','title', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'tanggal_nesia'];
-        $newPost = $this->htmlMarkup($newPost);
 
         $post = Post::create(
             [
                 'section' => $request->ref,
                 'user_id' => 1,
+                'date' => $request->date,
+                'time' => $request->time
             ] + $newPost
         );
+
         AttachmentUploadController::store($request, $post->id);
         $qr = $this->buildQrCode( $post->id );
         return view ( 'single-report', [

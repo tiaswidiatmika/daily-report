@@ -18,27 +18,44 @@ use App\Http\Controllers\TemplateController;
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
-// * create new template
-Route::get('create-template', [TemplateController::class, 'create'])->name('create-new-template');
-Route::post('create-template', [TemplateController::class, 'store'])->name('store-newly-created-template');
 
-// * === create from EXISTING template
-// *show form to create
-Route::get('create-from-template', [TemplateController::class, 'index'])
-    ->name('create-from-template');
-// * store new template
-Route::post('create-from-template', [PostController::class, 'storeFromTemplate']);
+// ** TEMPLATE
+// * show list of templates
+Route::get('template', [TemplateController::class, 'index'])
+    ->name('available-templates');
+
+// * show form to create template
+Route::get('template/new', [TemplateController::class, 'create'])
+    ->name('create-new-template');
+
+// * persist newly created template
+Route::post('template/new', [TemplateController::class, 'store'])
+    ->name('store-newly-created-template');
+
+// * use template to show post form
+Route::get('template/{id}/post/new', [TemplateController::class, 'createFromTemplate'] )
+->name('use-template');
+// * store post from existing template
+Route::post('template/{id}/post/new', [PostController::class, 'storeFromTemplate'])
+->name('store-post-from-template');
 // *delete template
-Route::delete('create-from-template/{id}/delete', [TemplateController::class, 'destroy'])
+Route::delete('template/{id}/delete', [TemplateController::class, 'destroy'])
     ->name('delete-template');
 
-Route::get('/create-from-template/{id}', [TemplateController::class, 'createFromTemplate'] )
-    ->name('use-template');
-// * === end route for "template"
-
 // * POSTINGAN | REPORT
+// * show all
+Route::get('report', [PostController::class, 'index'])
+    ->name('show-all-reports');
+// * show single
 Route::get('report/{id}', [PostController::class, 'show'])
     ->name('show-post');
+// * view form to create post
+Route::get('report/create', [PostController::class, 'create'])
+    ->name('create-post');
+// * stream pdf
 Route::get('report/show-pdf/{id}', [PostController::class, 'showPdf'])
     ->name('show-pdf');
-    
+
+
+// ! playground route
+Route::get('playground', [PostController::class, 'postTime']);

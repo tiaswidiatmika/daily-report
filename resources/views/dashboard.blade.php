@@ -20,8 +20,8 @@
             <!-- option starts here -->
             <!-- arrival options-->
             <ul class="section-option" id="arrival-option">
-                <li><a href="{{ route('create-new-template') }}">Create Template</a></li>
-                <li><a href="{{ route('create-from-template', ['ref' => 'arrival']) }}">Create Post from Existing Template</a></li>
+                <li><a href="{{ route('create-new-template', ['ref' => 'kedatangan']) }}">Create Template</a></li>
+                <li><a href="{{ route('available-templates', ['ref' => 'kedatangan']) }}">Create Post from Existing Template</a></li>
                 <li>Create Blank Post</li>
             </ul>
         </div>
@@ -32,8 +32,8 @@
             <!-- <img class="chevron-right" src="media/chevron-left-solid.svg" alt="" srcset=""> -->
             <!-- departure options -->
             <ul class="section-option" id="departure-option">
-                <li><a href="{{ route('create-new-template') }}">Create Template</a></li>
-                <li><a href="{{ route('create-from-template', ['ref' => 'departure']) }}">Create Post from Existing Template</a></li>
+                <li><a href="{{ route('create-new-template', ['ref' => 'keberangkatan']) }}">Create Template</a></li>
+                <li><a href="{{ route('available-templates', ['ref' => 'keberangkatan']) }}">Create Post from Existing Template</a></li>
                 <li>Create Blank Post</li>
             </ul>
         </div>

@@ -10,9 +10,8 @@
 @endsection
 
 @section('content')
-
     <form
-    action="{{ route('store-newly-created-template') }}" method="post"
+    action="{{ route('store-newly-created-template', ['ref' => $ref]) }}" method="post"
     class="main-page-container"
     >
     @method('POST')
@@ -21,32 +20,32 @@
         <!-- template name -->
         <label for="template_name">Judul Template</label>
         <input type="text" name="template_name" id="template_name" value="{{ old('template_name') }}">
-        <x-alert-create-new-template attribute="template_name" />
+        <x-alert-validate-request attribute="template_name" />
 
         <!-- Case -->
         <label for="case">Laporan</label>
         <textarea name="case" id="case">{{ old('case') }}</textarea>
-        <x-alert-create-new-template attribute="case" />
+        <x-alert-validate-request attribute="case" />
 
         <!-- Summary -->
         <label for="summary">Uraian Singkat</label>
         <textarea name="summary" id="summary">{{ old('summary') }}</textarea>
-        <x-alert-create-new-template attribute="summary" />
+        <x-alert-validate-request attribute="summary" />
 
         <!-- Chronology -->
         <label for="chronology">Kronologis</label>
         <textarea name="chronology" id="chronology">{{ old('chronology') }}</textarea>
-        <x-alert-create-new-template attribute="chronology" />
+        <x-alert-validate-request attribute="chronology" />
 
         <!-- measure -->
         <label for="measure">Tindakan yang Telah Diambil</label>
         <textarea name="measure" id="measure">{{ old('measure') }}</textarea>
-        <x-alert-create-new-template attribute="measure" />
+        <x-alert-validate-request attribute="measure" />
 
         <!-- conclusion -->
         <label for="conclusion">Kesimpulan</label>
         <textarea name="conclusion" id="conclusion">{{ old('conclusion') }}</textarea>
-        <x-alert-create-new-template attribute="conclusion" />
+        <x-alert-validate-request attribute="conclusion" />
         <!-- button submit -->
         <button type="submit">Kirim</button>
     </form>
