@@ -39,7 +39,7 @@
             <input 
                 class=""
                 type="text" name="date"
-                value="{{ \Carbon\Carbon::now()->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}"
+                value="{{ now()->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}"
         >
         <label 
                 class=""
@@ -47,7 +47,7 @@
             <input 
                 class=""
                 type="text" name="time"
-                value="{{ \Carbon\Carbon::now('Asia/Shanghai')->locale('id')->format('h:i') . ' - ' . \Carbon\Carbon::now('Asia/Shanghai')->locale('id')->addHour(1)->format('h:i') . ' WITA'}}"
+                value="{{ now('Asia/Shanghai')->locale('id')->format('h:i') . ' - ' . now('Asia/Shanghai')->locale('id')->addHour(1)->format('h:i') . ' WITA'}}"
         >
         <label 
                 class=""
