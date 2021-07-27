@@ -26,7 +26,7 @@ class AttachmentUploadController extends Controller
         $files = $request->file('image');
         if($files !== []) {
             foreach($files as $file) {
-                $imageName = 'Riksa 4 Daily Report - ' . Str::random(12) . time() . 'report-id-' . $postId . '.' . $file->extension();
+                $imageName = 'Riksa 4 Daily Report - ' . Str::random(12) . time() . ' post-id-' . $postId . '.' . $file->extension();
                 $file->move(public_path('attachments'), $imageName);
                 Attachment::create([
                     'title' => $attachmentTitle,
