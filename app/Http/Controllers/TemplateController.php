@@ -107,8 +107,10 @@ class TemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $templateId = $request->input('template_id');
+        Template::find($templateId)->delete();
+        return redirect()->back();
     }
 }

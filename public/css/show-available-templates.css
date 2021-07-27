@@ -80,6 +80,9 @@ body {
     color: var(--flat-red-hover);
     transform: scale(110%);
 }
+#delete-btn {
+    display: none;
+}
 
 /* add this when ready and (max-width: 1024px)  */
 @media screen and (min-width: 768px) {

@@ -22,14 +22,19 @@ Route::get('/', function () {
 Route::get('create-template', [TemplateController::class, 'create'])->name('create-new-template');
 Route::post('create-template', [TemplateController::class, 'store'])->name('store-newly-created-template');
 
-// * create from EXISTING template
+// * === create from EXISTING template
+// *show form to create
 Route::get('create-from-template', [TemplateController::class, 'index'])
     ->name('create-from-template');
+// * store new template
 Route::post('create-from-template', [PostController::class, 'storeFromTemplate']);
+// *delete template
+Route::delete('create-from-template/{id}/delete', [TemplateController::class, 'destroy'])
+    ->name('delete-template');
 
 Route::get('/create-from-template/{id}', [TemplateController::class, 'createFromTemplate'] )
     ->name('use-template');
-// * end route for "template"
+// * === end route for "template"
 
 // * POSTINGAN | REPORT
 Route::get('report/{id}', [PostController::class, 'show'])
