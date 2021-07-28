@@ -8,10 +8,10 @@ if ( !function_exists('todayIs') ) {
         $today->settings(['formatFunction' => 'translatedFormat']);
         $date = $today->format('l, j F Y');
         $hour = $today->format('h:i');
-        $todayIs = (object) [
+        $obj = (object) [
             'date' => $date,
             'time' => $hour,
         ];
-        return $todayIs;
+        return $obj;
     }
 }
