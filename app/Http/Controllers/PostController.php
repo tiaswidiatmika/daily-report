@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\AttachmentUploadController;
+use PDF;
 use Carbon\Carbon;
 use App\Models\Post;
+use App\Models\Report;
 use App\Models\Template;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\Request;
-use PDF;
-
 use function PHPSTORM_META\map;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use App\Http\Controllers\AttachmentUploadController;
+
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class PostController extends Controller
 {
@@ -43,7 +44,7 @@ class PostController extends Controller
         $tryToValidate = collect( $inputs )->mapWithKeys( function($item) {
             return [$item => 'required'];
         } )->toArray();
-        $validated = $request->validate( $tryToValidate );
+        $request->validate( $tryToValidate );
         
         foreach ($columnsToFill as $tableColumn) {
             $sentence = $template->$tableColumn;
@@ -58,73 +59,22 @@ class PostController extends Controller
 
     }
 
-    public function htmlMarkup($post)
-    {
-        $date = now();
-        $translateMonths = [
-            '01' => 'Januari',
-            '02' => 'Februari',
-            '03' => 'Maret',
-            '04' => 'April',
-            '05' => 'Mei',
-            '06' => 'Juni',
-            '07' => 'Juli',
-            '08' => 'Agustus',
-            '09' => 'September',
-            '10' => 'Oktober',
-            '11' => 'November',
-            '12' => 'Desember',
-        ];
-
-        $translateDays = [
-            'Sun' => 'Minggu',
-            'Mon' => 'Senin',
-            'Tue' => 'Selasa',
-            'Wed' => 'Rabu',
-            'Thu' => 'Kamis',
-            'Fri' => "Jum'at",
-            'Sat' => 'Sabtu',
-        ];
-        $post['title'] = '';
-        $post['tanggal_nesia'] = "{$translateDays[$date->format('D')]}, {$date->format('d')} {$translateMonths[$date->format('m')]} {$date->format('Y')}";
-        foreach ($post as $attribute => $value) {
-            switch ($attribute) {
-                case 'title':
-                    $post['title'] = $post['tanggal_nesia'];
-                    break;
-
-                case 'case':
-                    $post['case'] = "$value";
-                    break;
-
-                case 'summary':
-                    $post['summary'] = "$value";
-                    break;
-
-                case 'chronology':
-                    $post['chronology'] = $value;
-                    break;
-
-                case 'measure':
-                    $post['measure'] = $value;
-                    break;
-
-                case 'conclusion':
-                    $post['conclusion'] = $value;
-                    break;
-
-                default:
-                    # code...
-                    break;
-            }
-        }
-        return $post;
-    }
+    
     public function index()
     {
         // view all posts by all user in descending order
         return Post::all()->sortByDesc('created_at');
 
+    }
+
+    public function dashboard() {
+        // check if there any post created that day
+        $todaysDate = today()->date;
+        $todaysPost = Post::where('date', $todaysDate)->first() !== null ? true : false;
+        // pass its value to buil report button in dashboard view
+        return view('dashboard', [
+            'todaysPostIsExist' => $todaysPost,
+        ]);
     }
 
     /**
@@ -150,10 +100,13 @@ class PostController extends Controller
 
     public function storeFromTemplate(Request $request)
     {
+        // get today's report
+        $report = $this->todaysReport();
         $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
-
+        
         $post = Post::create(
             [
+                'report_id' => $report->id,
                 'section' => $request->ref,
                 'user_id' => 1,
                 'date' => $request->date,
@@ -255,4 +208,19 @@ class PostController extends Controller
             ->getDataUri();
         return $qr;
     }
+
+    public function todaysReport () {
+        // check if table reports has already had a record containing today's date
+        // if not, create it
+        $report = Report::firstOrCreate([
+            'date' => today()->date,
+        ]);
+        return $report;
+    }
+
+    public function buildTodaysReport () {
+
+    }
+
+
 }

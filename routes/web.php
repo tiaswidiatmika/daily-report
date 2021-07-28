@@ -56,6 +56,6 @@ Route::get('report/show-pdf/{id}', [PostController::class, 'showPdf'])
 
 
 // ! playground route
-Route::get('playground', function () {
-    echo todaysDateTime()->time;
-});
+Route::get('report', [ReportController::class, 'index']);
+
+Route::get('playground', [PostController::class, 'checkTodaysReport']);
