@@ -79,6 +79,7 @@ a.menu-links:hover {
     flex-direction: column;
     align-self: center;
     background: white;
+    position: relative;
 }
 .single-section-container {
     display: flex;
@@ -91,6 +92,16 @@ a.menu-links:hover {
 }
 .section-option {
     list-style: none;
+}
+
+.build-report {
+    position: absolute;
+    bottom: -3rem;
+    right: 1rem;
+    padding: 0.4rem;
+    background: var(--flat-blue-primary);
+    color: white;
+    border-radius: 6px;
 }
 /* small screen */
 @media screen and (min-width:320px) and (max-width:752px) {

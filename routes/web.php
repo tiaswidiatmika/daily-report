@@ -15,9 +15,7 @@ use App\Http\Controllers\TemplateController;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::get('/', [PostController::class, 'dashboard'])->name('dashboard');
 
 // ** TEMPLATE
 // * show list of templates
@@ -58,4 +56,6 @@ Route::get('report/show-pdf/{id}', [PostController::class, 'showPdf'])
 
 
 // ! playground route
-Route::get('playground', [PostController::class, 'postTime']);
+Route::get('playground', function () {
+    echo todaysDateTime()->time;
+});
