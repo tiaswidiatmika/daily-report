@@ -17,7 +17,7 @@ class Report extends Model
     }
     public function checkTodaysReport ()
     {
-        $today = today()->date;
+        $today = todayIs()->date;
         return $this->where('date', $today)->first() !== null ? true : false;
     }
 }
