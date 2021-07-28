@@ -69,7 +69,7 @@ class PostController extends Controller
 
     public function dashboard() {
         // check if there any post created that day
-        $todaysDate = today()->date;
+        $todaysDate = todayIs()->date;
         $todaysPost = Post::where('date', $todaysDate)->first() !== null ? true : false;
         // pass its value to buil report button in dashboard view
         return view('dashboard', [
@@ -213,7 +213,7 @@ class PostController extends Controller
         // check if table reports has already had a record containing today's date
         // if not, create it
         $report = Report::firstOrCreate([
-            'date' => today()->date,
+            'date' => todayIs()->date,
         ]);
         return $report;
     }
