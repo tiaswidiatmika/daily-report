@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TemplateController;
 
 /*
@@ -26,13 +27,16 @@ Route::get('template', [TemplateController::class, 'index'])
 Route::get('template/new', [TemplateController::class, 'create'])
     ->name('create-new-template');
 
-// * persist newly created template
-Route::post('template/new', [TemplateController::class, 'store'])
-    ->name('store-newly-created-template');
-
 // * use template to show post form
 Route::get('template/{id}/post/new', [TemplateController::class, 'createFromTemplate'] )
 ->name('use-template');
+
+// * persist newly created template
+Route::post('template/new', [TemplateController::class, 'store'])
+    ->name('store-newly-created-template');
+// // * use template to show post form
+// Route::get('template/{id}/post/new', [TemplateController::class, 'createFromTemplate'] )
+// ->name('use-template');
 // * store post from existing template
 Route::post('template/{id}/post/new', [PostController::class, 'storeFromTemplate'])
 ->name('store-post-from-template');
@@ -40,22 +44,26 @@ Route::post('template/{id}/post/new', [PostController::class, 'storeFromTemplate
 Route::delete('template/{id}/delete', [TemplateController::class, 'destroy'])
     ->name('delete-template');
 
-// * POSTINGAN | REPORT
+// * POSTS
 // * show all
-Route::get('report', [PostController::class, 'index'])
-    ->name('show-all-reports');
-// * show single
-Route::get('report/{id}', [PostController::class, 'show'])
-    ->name('show-post');
+Route::get('post', [PostController::class, 'index'])
+    ->name('show-all-posts');
+
 // * view form to create post
-Route::get('report/create', [PostController::class, 'create'])
+Route::get('post/create', [PostController::class, 'create'])
     ->name('create-post');
 // * stream pdf
-Route::get('report/show-pdf/{id}', [PostController::class, 'showPdf'])
+Route::get('post/show-pdf/{id}', [PostController::class, 'showPdf'])
     ->name('show-pdf');
+// * show single
+Route::get('post/{id}', [PostController::class, 'show'])
+    ->name('show-post');
 
-
-// ! playground route
+// * REPORT
+// * show all
 Route::get('report', [ReportController::class, 'index']);
+Route::get('report/today', [ReportController::class, 'today'])
+    ->name('todays-report');
+// ! playground route
 
 Route::get('playground', [PostController::class, 'checkTodaysReport']);

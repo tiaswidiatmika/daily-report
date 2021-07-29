@@ -30,6 +30,7 @@
             <input 
                 class=""
                 type="text" name="{{ $input }}"
+                value="{{ old( $input ) }}"
             >
             <x-alert-validate-request attribute="{{ $input }}" />
         @endforeach

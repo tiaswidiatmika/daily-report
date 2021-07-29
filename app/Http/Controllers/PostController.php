@@ -12,7 +12,7 @@ use function PHPSTORM_META\map;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use App\Http\Controllers\AttachmentUploadController;
-
+use App\Http\Requests\StoreFromTemplate;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
@@ -36,15 +36,6 @@ class PostController extends Controller
         
         $inputs = $template->setupInputs();
         $container = [];
-        
-        // * get dynamic columns from template model method 'setupInputs()'
-        // * make a new variable to hold the specified resource, but using collect()
-        // * iterate through new variable, modify each value using key => value, 
-        // * key => value is item => 'required'
-        $tryToValidate = collect( $inputs )->mapWithKeys( function($item) {
-            return [$item => 'required'];
-        } )->toArray();
-        $request->validate( $tryToValidate );
         
         foreach ($columnsToFill as $tableColumn) {
             $sentence = $template->$tableColumn;
@@ -98,12 +89,15 @@ class PostController extends Controller
         Post::create($request);
     }
 
-    public function storeFromTemplate(Request $request)
+    public function storeFromTemplate(StoreFromTemplate $request)
     {
         // get today's report
+        // ddd($request);
+
         $report = $this->todaysReport();
-        $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
         
+        $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
+        // ddd($newPost);
         $post = Post::create(
             [
                 'report_id' => $report->id,
@@ -208,6 +202,7 @@ class PostController extends Controller
             ->getDataUri();
         return $qr;
     }
+
 
     public function todaysReport () {
         // check if table reports has already had a record containing today's date

@@ -17,7 +17,7 @@ class PostSeeder extends Seeder
         // $date = ucfirst(Carbon::parse(Carbon::now()->locale('id'))->format('D, d F Y'));
         // protected $fillable = ['user_id','title', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
         Post::create([
-            'report_id' => 1,
+            'report_id' => \App\Models\Report::todaysReport()->id,
             'section' => 'arrival',
             'user_id' => 1,
             'date' => todayIs()->date,

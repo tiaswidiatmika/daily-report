@@ -11,7 +11,7 @@
 @section('content')
     <div class="pick-a-section-container">
         @if ( $todaysPostIsExist )
-            <a class="build-report" href="menuju-ke-build-report-yang-berisi-banyak-post">Build</a>
+            <a class="build-report" href="{{ route('todays-report') }}">Build</a>
         @endif
 
         <span class="main-page-title">Pick a Section</span>

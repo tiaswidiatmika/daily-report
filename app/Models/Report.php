@@ -15,9 +15,14 @@ class Report extends Model
     {
         return $this->hasMany(Post::class);
     }
-    public function checkTodaysReport ()
+    public static function checkTodaysReport ()
     {
         $today = todayIs()->date;
-        return $this->where('date', $today)->first() !== null ? true : false;
+        return Report::where('date', $today)->first() !== null ? true : false;
+    }
+
+    public static function todaysReport ()
+    {
+        return Report::where('date', todayIs()->date)->first();
     }
 }

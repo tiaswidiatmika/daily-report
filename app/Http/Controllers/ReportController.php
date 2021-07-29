@@ -16,6 +16,18 @@ class ReportController extends Controller
     {
         //
     }
+    public function today()
+    {
+        $report = Report::where('date', todayIs()->date)->first();
+
+        // return empty collection if no report for today available
+        $allPost = $report != null ?
+            \App\Models\Post::where('report_id', $report->id)->get() : collect();
+        
+        return view('todays-post', [
+            'posts' => $allPost
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
