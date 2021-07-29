@@ -29,10 +29,10 @@
                 for="{{ $input }}">{{ ucfirst($input) }}</label>
             <input 
                 class=""
-                type="text" name="{{ $input }}"
-                value="{{ old( $input ) }}"
+                type="text" name="{{ str_replace(' ', '_', $input) }}"
+                value="{{ old( str_replace(' ', '_', $input) ) }}"
             >
-            <x-alert-validate-request attribute="{{ $input }}" />
+            <x-alert-validate-request attribute="{{ str_replace(' ', '_', $input) }}" />
         @endforeach
         <label 
                 class=""

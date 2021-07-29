@@ -31,9 +31,11 @@ class StoreFromTemplate extends FormRequest
         // * iterate through new variable, modify each value using key => value, 
         // * key => value is item => 'required'
         $tryToValidate = [];
-        collect( $inputs )->map( function($item) {
+        foreach ($inputs as $item) {
+            $item = str_replace(' ', '_', $item);
             $tryToValidate[$item] = 'required';
-        } );
+        }
+        // dd ($tryToValidate);
         return $tryToValidate;
         
     }

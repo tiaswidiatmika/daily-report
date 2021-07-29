@@ -93,7 +93,7 @@ class PostController extends Controller
     {
         // get today's report
         // ddd($request);
-
+        $request->validated();
         $report = $this->todaysReport();
         
         $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
