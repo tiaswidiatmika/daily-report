@@ -62,6 +62,9 @@
         .h-100percent {
             height: 100%;
         }
+        .margin-top-2 {
+            margin-top: 2rem;
+        }
         .ml-10cm {
             margin-left: 10cm;
         }        
@@ -201,12 +204,18 @@
     {{-- attachment --}}
     @if ($attachment->isNotEmpty())
         <p style="page-break-after: always;"></p>
-        <p><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p>
+        
+
+        <table class="no-border">
+        <tr>
+            <td><p class="text-center"><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p></td>
+        </tr>    
         @foreach ($attachment as $item)
-            <img class="block text-center" src="{{ 'attachments/' . $item->path }}" alt="" srcset="">
+            <tr><td class="text-center"><img class="block text-center margin-top-2" src='attachments/{{ $item->path }}' alt="" srcset=""> </td></tr>
         @endforeach
+    
+        </table>
     @endif
-    {{-- </div> --}}
 
 </body>
 </html>
