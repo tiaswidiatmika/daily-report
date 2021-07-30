@@ -92,12 +92,11 @@ class PostController extends Controller
     public function storeFromTemplate(StoreFromTemplate $request)
     {
         // get today's report
-        // ddd($request);
         $request->validated();
         $report = $this->todaysReport();
         
         $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
-        // ddd($newPost);
+
         $post = Post::create(
             [
                 'report_id' => $report->id,
@@ -178,17 +177,21 @@ class PostController extends Controller
         //
     }
 
-    public function showPdf($id)
+    public static function showPdf()
     {
-        $post = Post::find($id);
-        $qr = $this->buildQrCode( $post->id );
+    
+        $post = Post::find(16);
+        $qr = PostController::buildQrCode( $post->id );
+        $attachment = $post->attachments()
+            ->where('post_id', '=', $post->id)
+            ->get();
         
-        $pdf = PDF::loadView('single-report', compact('post', 'qr'));
+        $pdf = PDF::loadView('single-report', compact('post', 'qr', 'attachment'));
 
         return $pdf->stream('report.pdf');
     }
 
-    public function buildQrCode ($postId)
+    public static function buildQrCode ($postId)
     {
         $qr = Builder::create()
             ->writer(new PngWriter())

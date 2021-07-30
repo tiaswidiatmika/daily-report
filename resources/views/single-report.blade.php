@@ -6,17 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" type="image/jpg" href="{{ asset('logo.png') }}"/>
     <style>
-        body {
-            width: 210mm;
-            display: flex;
-            flex-direction: column;
-            flex-wrap: nowrap;
-            align-content: center;
-            justify-content: center;
-            align-items: center;
-            margin: auto;
-            padding: 1rem;
-        }
         table.border, table.border th {
             border: 1px solid;
             border-collapse: collapse;
@@ -62,7 +51,7 @@
             font-size: 0.8rem;
         }
         .float-left {
-            margin-right: auto;
+            margin-left: 30rem;
         }
         .float-right {
             margin-left: auto;
@@ -76,16 +65,19 @@
         .ml-10cm {
             margin-left: 10cm;
         }        
+        /* .block {
+            display: block;
+        } */
     </style>
     <title>Single Report</title>
 </head>
 <body>
-    <table class="no-border float-left">
+    <table class="no-border">
         <tr>
             <td>
-                <img src="/media/logo-kemenkumham.jpg" alt="" class="logo-sm">
+                <img src="media/logo-kemenkumham.jpg" alt="" class="logo-sm">
             </td>
-            <td><img class="logo-sm" src="/media/logo-imigrasi.png" alt="logo ini" srcset=""></td>
+            <td><img class="logo-sm" src="media/logo-imigrasi.png" alt="logo ini" srcset=""></td>
             <td>
                 <p class="font-sm">
                     Kantor Imigrasi Kelas I Khusus TPI Ngurah Rai<br>
@@ -106,13 +98,13 @@
         Telepon/Faksimili: 0361-9551038,0361-8568395/0361-9357011<br>
         Laman: www.ngurahrai.imigrasi.go.id, Email: kanim_ngurahrai@imigrasi.go.id<br>
     </p>
-    <p class="float-right">
+    <p class="float-left">
         Kepada Yth.<br>
         Kepala Kantor Imigrasi<br>
         Kelas I Khusus TPI Ngurah Rai
     </p>
 
-    <p><b><u>LAPORAN KHUSUS / ATENSI PIMPINAN</u></b></p>
+    <p class="text-center"><b><u>LAPORAN KHUSUS / ATENSI PIMPINAN</u></b></p>
 
     <table class="border w-100percent">
         <tr>
@@ -192,7 +184,7 @@
         </tr>
     </table>
     <p style="margin-left: 10cm;">
-        Badung, {{ $post->tanggal_nesia }} <br />
+        {{ $post->date }} <br />
         Kepala Seksi Pemeriksaan IV
         <br>
         <img class="block" src="{{ $qr }}" alt="" style="width: 100px;"><br>
@@ -200,7 +192,7 @@
         NIP. 19870303 200701 1 003 <br />
     </p>
     
-    <p class="float-left">
+    <p class="">
         Tembusan: <br />
         1. Kepala Bidang Tempat Pemeriksaan Imigrasi (sebagai laporan);<br />
         2. Kepala Bidang Intelijen dan Penindakan Keimigrasian;<br />
@@ -211,7 +203,7 @@
         <p style="page-break-after: always;"></p>
         <p><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p>
         @foreach ($attachment as $item)
-            <img class="block" src="{{ '/attachments\/' . $item->path }}" alt="" srcset="">
+            <img class="block text-center" src="{{ 'attachments/' . $item->path }}" alt="" srcset="">
         @endforeach
     @endif
     {{-- </div> --}}

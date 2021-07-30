@@ -66,4 +66,4 @@ Route::get('report/today', [ReportController::class, 'today'])
     ->name('todays-report');
 // ! playground route
 
-Route::get('playground', [PostController::class, 'checkTodaysReport']);
+Route::get('playground', [PostController::class, 'showPdf']);

@@ -11,7 +11,7 @@ class Report extends Model
     protected $fillable = ['date'];
 
     // relation to post
-    public function post()
+    public function posts()
     {
         return $this->hasMany(Post::class);
     }

@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use PDF;
 
 use App\Models\Report;
 use Illuminate\Http\Request;
+use App\Http\Controllers\PostController;
 
 class ReportController extends Controller
 {
@@ -21,13 +23,20 @@ class ReportController extends Controller
         $report = Report::where('date', todayIs()->date)->first();
 
         // return empty collection if no report for today available
-        $allPost = $report != null ?
-            \App\Models\Post::where('report_id', $report->id)->get() : collect();
+        // $allPost = $report != null ?
+        //     \App\Models\Post::where('report_id', $report->id)->get() : collect();
+        $post = \App\Models\Post::find(1);
+
+            return view ( 'single-report', [
+                'post' => $post,
+                'qr' => '',
+                'attachment' => $post->attachments()
+                    ->where('post_id', '=', $post->id)
+                    ->get(),
+            ] );
         
-        return view('todays-post', [
-            'posts' => $allPost
-        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
