@@ -180,13 +180,11 @@ class PostController extends Controller
     public static function showPdf()
     {
     
-        $post = Post::find(16);
+        $post = Post::with('attachments')->find(26);
+        $attachments = $post->attachments;
         $qr = PostController::buildQrCode( $post->id );
-        $attachment = $post->attachments()
-            ->where('post_id', '=', $post->id)
-            ->get();
         
-        $pdf = PDF::loadView('single-report', compact('post', 'qr', 'attachment'));
+        $pdf = PDF::loadView('single-report', compact('post', 'qr', 'attachments'));
 
         return $pdf->stream('report.pdf');
     }

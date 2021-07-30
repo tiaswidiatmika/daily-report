@@ -68,9 +68,9 @@
         .ml-10cm {
             margin-left: 10cm;
         }        
-        /* .block {
-            display: block;
-        } */
+        .max-w-80percent {
+            max-width: 35rem;
+        }
     </style>
     <title>Single Report</title>
 </head>
@@ -202,16 +202,16 @@
         3. Kepala Bidang Teknologi Informasi dan Komunikasi Keimigrasian
     </p>
     {{-- attachment --}}
-    @if ($attachment->isNotEmpty())
+    @if ($attachments->isNotEmpty())
         <p style="page-break-after: always;"></p>
         
 
-        <table class="no-border">
+        <table class="">
         <tr>
-            <td><p class="text-center"><b><u>{{ strtoupper( $attachment->first()->title ) }}</u></b></p></td>
+            <td><p class="text-center"><b><u>{{ strtoupper( $attachments->first()->title ) }}</u></b></p></td>
         </tr>    
-        @foreach ($attachment as $item)
-            <tr><td class="text-center"><img class="block text-center margin-top-2" src='attachments/{{ $item->path }}' alt="" srcset=""> </td></tr>
+        @foreach ($attachments as $item)
+            <tr><td class="text-center"><img class="max-w-80percent block text-center margin-top-2" src='attachments/{{ $item->path }}' alt="" srcset=""> </td></tr>
         @endforeach
     
         </table>
