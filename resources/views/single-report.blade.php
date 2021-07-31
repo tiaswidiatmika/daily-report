@@ -190,7 +190,7 @@
         {{ $post->date }} <br />
         Kepala Seksi Pemeriksaan IV
         <br>
-        <img class="block" src="{{ $qr }}" alt="" style="width: 100px;"><br>
+        <img class="block" src='qrcode/{{ $post->qrcode }}' alt="" style="width: 100px;"><br>
         Ahmad Ghazali <br />
         NIP. 19870303 200701 1 003 <br />
     </p>
@@ -202,15 +202,13 @@
         3. Kepala Bidang Teknologi Informasi dan Komunikasi Keimigrasian
     </p>
     {{-- attachment --}}
-    @if ($attachments->isNotEmpty())
-        <p style="page-break-after: always;"></p>
-        
-
+    @if ($post->attachments->isNotEmpty())
+        {{-- <p style="page-break-after: always;"></p> --}}
         <table class="">
         <tr>
-            <td><p class="text-center"><b><u>{{ strtoupper( $attachments->first()->title ) }}</u></b></p></td>
+            <td><p class="text-center"><b><u>{{ strtoupper( $post->attachments->first()->title ) }}</u></b></p></td>
         </tr>    
-        @foreach ($attachments as $item)
+        @foreach ($post->attachments as $item)
             <tr><td class="text-center"><img class="max-w-80percent block text-center margin-top-2" src='attachments/{{ $item->path }}' alt="" srcset=""> </td></tr>
         @endforeach
     

@@ -7,19 +7,12 @@ use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\Report;
 use App\Models\Template;
-use Endroid\QrCode\QrCode;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Endroid\QrCode\Color\Color;
-use function PHPSTORM_META\map;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
 use App\Http\Requests\StoreFromTemplate;
-use App\Http\Controllers\AttachmentUploadController;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use App\Http\Controllers\AttachmentUploadController as Attachment;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\QrcController as QrCode;
+
 
 class PostController extends Controller
 {
@@ -55,12 +48,10 @@ class PostController extends Controller
 
     }
 
-    
     public function index()
     {
-        // view all posts by all user in descending order
+        // view all posts by all users in descending order
         return Post::all()->sortByDesc('created_at');
-
     }
 
     public function dashboard() {
@@ -89,19 +80,8 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store( $report, $request, $newPost )
     {
-        Post::create($request);
-    }
-
-    public function storeFromTemplate(StoreFromTemplate $request)
-    {
-        // get today's report
-        $request->validated();
-        $report = $this->todaysReport();
-        
-        $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
-
         $post = Post::create(
             [
                 'report_id' => $report->id,
@@ -111,25 +91,24 @@ class PostController extends Controller
                 'time' => $request->time
             ] + $newPost
         );
-        $qrFileName = PostController::writeQrCode( $post->id );
-        $post->qrcode = $qrFileName;
-        $post->save();
-        AttachmentUploadController::store($request, $post->id);
-        $qr = $this->buildQrCode( $post->id );
-        return view ( 'single-report', [
-            'post' => $post,
-            'qr' => $qr,
-            'attachments' => $post->attachments()
-                ->where('post_id', '=', $post->id)
-                ->get(),
-        ] );
-        // * this view using the old template to show report
-        // * before using dompdf
+        return $post;
+    }
 
-        // return view('report', [
-        //     'post' => $post,
-        //     'attachment' => $post->attachments()->where('post_id', '=', $post->id)->first(),
-        // ]);
+    public function storeFromTemplate(StoreFromTemplate $request)
+    {
+        $request->validated();
+        // first or create todays report
+        $report = ReportController::today();
+        // prepare new post
+        $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
+        // persist all
+        $post = $this->store( $report, $request, $newPost );
+        // update created qrcode file name as path in this post
+        $this->createQrCodePng( $post );
+        // store any attachments
+        Attachment::store($request, $post->id);
+        return view ( 'single-report', compact( 'post' ) );
+        
     }
 
     /**
@@ -186,69 +165,15 @@ class PostController extends Controller
 
     public static function showPdf()
     {
-    
-        $post = Post::with('attachments')->find(6);
-        $attachments = $post->attachments;
-        // $qr = PostController::buildQrCode( $post->id );
-        
-        $pdf = PDF::loadView('single-report', compact('post', 'attachments'));
-
+        $post = Post::find(2);   
+        $pdf = PDF::loadView('single-report', compact('post'));
         return $pdf->stream('report.pdf');
     }
 
-    public static function buildQrCode ($postId)
+    public function createQrCodePng ( $post )
     {
-        $qr = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data(route('show-post', ['id' => $postId]))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->size(300)
-            ->margin(0)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->build()
-            ->getDataUri();
-        return $qr;
+        $qrFileName = QrCode::write( $post->id );
+        $post->qrcode = $qrFileName;
+        $post->save();
     }
-
-
-    public static function writeQrCode ( $postId )
-    {
-        $writer = new PngWriter();
-
-        // Create QR code
-        $qrCode = QrCode::create( route('show-post', ['id' => $postId]) )
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
-            ->setSize(300)
-            ->setMargin(10)
-            ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->setForegroundColor(new Color(0, 0, 0))
-            ->setBackgroundColor(new Color(255, 255, 255));
-
-        $result = $writer->write($qrCode);
-        $fileName = Str::random(12) . 'post_id' . $postId . '.png';
-        $result->saveToFile( './qrcode/' . $fileName );
-        return $fileName;
-
-    }
-
-    public function todaysReport () {
-        // check if table reports has already had a record containing today's date
-        // if not, create it
-        $report = Report::firstOrCreate([
-            'date' => todayIs()->date,
-        ]);
-        return $report;
-    }
-
-    public function composeReport (  )
-    {
-        $ids = [8, 9];
-        $posts = Post::with('attachments')->find( $ids );
-        return view('compose-report', compact( 'posts' ) );
-
-    }
-
-
 }

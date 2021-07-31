@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use PDF;
 
+use App\Models\Post;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PostController;
@@ -14,27 +15,32 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    
     public function index()
     {
-        //
-    }
-    public function today()
-    {
-        $report = Report::where('date', todayIs()->date)->first();
+        $report = Report::where('date', todayIs()->date)
+            ->first();
 
         // return empty collection if no report for today available
-        // $allPost = $report != null ?
-        //     \App\Models\Post::where('report_id', $report->id)->get() : collect();
-        $post = \App\Models\Post::find(1);
+        $post = Post::find(1);
+        return view ( 'single-report', compact( 'post' ) );
 
-            return view ( 'single-report', [
-                'post' => $post,
-                'qr' => '',
-                'attachment' => $post->attachments()
-                    ->where('post_id', '=', $post->id)
-                    ->get(),
-            ] );
-        
+    }
+
+    public static function today () {
+        // check if table reports has already had a record containing today's date
+        // if not, create it
+        $report = Report::firstOrCreate([
+            'date' => todayIs()->date,
+        ]);
+        return $report;
+    }
+
+    public static function compose (  )
+    {
+        $ids = [8, 9];
+        $posts = Post::with('attachments')->find( $ids );
+        return view('compose-report', compact( 'posts' ) );
     }
 
 
