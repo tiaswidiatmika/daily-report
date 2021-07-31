@@ -67,3 +67,4 @@ Route::get('report/today', [ReportController::class, 'today'])
 // ! playground route
 
 Route::get('playground', [PostController::class, 'showPdf']);
+Route::get('compose', [PostController::class, 'composeReport']);

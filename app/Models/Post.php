@@ -14,7 +14,7 @@ class Post extends Model
     // use HasSlug;
 
     // protected $fillable = ['template_name', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
-    protected $fillable = ['report_id', 'section', 'user_id','date', 'time', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
+    protected $fillable = ['report_id', 'section', 'user_id','date', 'time', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'qrcode'];
 
     // relation to user
     public function user()

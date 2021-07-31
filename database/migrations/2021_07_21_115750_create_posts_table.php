@@ -25,6 +25,7 @@ class CreatePostsTable extends Migration
             $table->text('chronology');
             $table->text('measure');
             $table->text('conclusion');
+            $table->string('qrcode')->nullable();
             $table->string('slug')->nullable();
             $table->timestamps();
         });
