@@ -104,10 +104,11 @@ class PostController extends Controller
         // persist all
         $post = $this->store( $report, $request, $newPost );
         // update created qrcode file name as path in this post
-        $this->createQrCodePng( $post );
+        PostController::createQrCodePng( $post );
         // store any attachments
         Attachment::store($request, $post->id);
-        return view ( 'single-report', compact( 'post' ) );
+        return $this->showPdf( $post->id );
+        // return view ( 'single-report', compact( 'post' ) );
         
     }
 
@@ -163,14 +164,14 @@ class PostController extends Controller
         //
     }
 
-    public static function showPdf()
+    public static function showPdf( $id )
     {
-        $post = Post::find(2);   
+        $post = Post::find( $id );   
         $pdf = PDF::loadView('single-report', compact('post'));
         return $pdf->stream('report.pdf');
     }
 
-    public function createQrCodePng ( $post )
+    public static function createQrCodePng ( $post )
     {
         $qrFileName = QrCode::write( $post->id );
         $post->qrcode = $qrFileName;
