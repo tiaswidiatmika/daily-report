@@ -64,9 +64,8 @@ Route::get('post/{id}', [PostController::class, 'show'])
 Route::get('report', [ReportController::class, 'index']);
 Route::get('report/today', [ReportController::class, 'today'])
     ->name('todays-report');
+Route::get('report/compose', [ReportController::class, 'compose'])
+    ->name('compose-report');
 // ! playground route
 
-// Route::get('playground', [PostController::class, 'showPdf']);
-Route::get('playground', [PostController::class, 'showPdf']);
-
-Route::get('compose', [PostController::class, 'composeReport']);
+// Route::get('playground', [ReportController::class, 'index']);

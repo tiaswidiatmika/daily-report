@@ -7,6 +7,8 @@ use App\Models\Post;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PdfController;
+
 
 class ReportController extends Controller
 {
@@ -17,13 +19,10 @@ class ReportController extends Controller
      */
     
     public function index()
-    {
-        $report = Report::where('date', todayIs()->date)
-            ->first();
-
-        // return empty collection if no report for today available
-        $post = Post::find(1);
-        return view ( 'single-report', compact( 'post' ) );
+    {   
+        $report = Report::today(); 
+        $posts = $report->posts ?? collect();
+        return view( 'todays-post', compact( 'report', 'posts' ) );
 
     }
 
@@ -36,11 +35,10 @@ class ReportController extends Controller
         return $report;
     }
 
-    public static function compose (  )
+    public function compose ()
     {
-        $ids = [8, 9];
-        $posts = Post::with('attachments')->find( $ids );
-        return view('compose-report', compact( 'posts' ) );
+        $report = Report::today();
+        return PdfController::viewComposed ( $report );
     }
 
 

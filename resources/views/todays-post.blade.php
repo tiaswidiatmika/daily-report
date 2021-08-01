@@ -12,11 +12,11 @@
     @if ($posts->isNotEmpty())
         @foreach ($posts as $post)
             {{ $post->section }} <br>
-        @endforeach
+            @endforeach
+        <a href="{{ route( 'compose-report', compact( 'posts' ) ) }}">build report</a>
     @else
         no post yet.
     @endif
 
-    <button>build report</button>
 </body>
 </html>

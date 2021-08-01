@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Post;
 use Illuminate\Database\Seeder;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
 
 class PostSeeder extends Seeder
 {
@@ -17,7 +19,7 @@ class PostSeeder extends Seeder
         // $date = ucfirst(Carbon::parse(Carbon::now()->locale('id'))->format('D, d F Y'));
         // protected $fillable = ['user_id','title', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
         Post::create([
-            'report_id' => \App\Models\Report::todaysReport()->id,
+            'report_id' => \App\Models\Report::today()->id,
             'section' => 'arrival',
             'user_id' => 1,
             'date' => todayIs()->date,
@@ -27,6 +29,8 @@ class PostSeeder extends Seeder
             'chronology' => "Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei dilakukan pada pukul 13.40 WITA",
             'measure' => "Melaporkan kejadian tersebut pada pimpinan. Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.",
             'conclusion' => "Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.",
+            'qrcode' => 'rKhMzzoEFLeapost_id3.png',
         ]);
+
     }
 }
