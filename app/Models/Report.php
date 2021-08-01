@@ -9,6 +9,7 @@ class Report extends Model
 {
     use HasFactory;
     protected $fillable = ['date'];
+    protected $with = ['posts'];
 
     // relation to post
     public function posts()
@@ -21,8 +22,8 @@ class Report extends Model
         return Report::where('date', $today)->first() !== null ? true : false;
     }
 
-    public static function todaysReport ()
+    public static function today ()
     {
-        return Report::where('date', todayIs()->date)->first();
+        return Report::where( 'date', todayIs()->date )->first();
     }
 }
