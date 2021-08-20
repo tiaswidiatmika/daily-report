@@ -15,6 +15,11 @@ class PresenceController extends Controller
         return $retrievedUserId;
     }
 
+    public function create ()
+    {
+        return view('livewire.presence-form');
+    }
+
     public function show ($id = 4)
     {
         var_dump (json_decode(Formation::find($id)->paspor_indonesia));
@@ -22,27 +27,36 @@ class PresenceController extends Controller
 
     public function store(Request $request)
     {
-        // * retrieve the formations_table fillable column
-        $tableColumns = new Formation;
-        $tableColumns = collect($tableColumns->getFillables());
-
-        // * create an array with key of formations_table's column names
-        // * with the value of $request [ respective column name ]
-        $formations = [];
-        foreach ($tableColumns as $column) {
-            $formations[$column] = $this->transformsToFullName($request[$column]);
-        }
-        Formation::insert($formations);
+        $record = $this->getFormation( $request );
+        $record = Formation::create( $record );
+        $positions = $record->getFillable();
+        $formation = $this->tableRecordToArray( $record );
+        $formation = $this->transformToFullName( $formation );
+        return view('report.presence-report', compact('positions','formation'));
     }
 
-    public function transformsToFullName(String $names)
+    public function getFormation ( $request )
     {
-        $names = explode(',', $names);
-        $names = collect($names)
-            ->transform( function($alias) {
-                return User::where('alias', $alias)->first()->name;
-            } );
-        // return implode("---", $names->toArray());
-        return json_encode($names);
+        $formation = [];
+        // * retrieve the formations_table fillable column
+        $tableColumns = Formation::getFillables();
+        // $tableColumns = collect($tableColumns);
+
+        foreach ($tableColumns as $column) {
+            $formation[$column] = json_encode ( explode(',', $request->$column) );
+        }
+        return $formation;
     }
+
+    public function tableRecordToArray ( $record )
+    {
+        // overwrite fillable value with json decode
+        $formation = [];
+        foreach ( $record->getFillable() as $tableAttribute ) {
+            $formation[$tableAttribute] = json_decode( $record->$tableAttribute );
+        }
+        return $formation;
+    }
+
+    
 }

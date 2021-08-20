@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\TemplateController;
 
 /*
@@ -66,6 +67,12 @@ Route::get('report/today', [ReportController::class, 'today'])
     ->name('todays-report');
 Route::get('report/compose', [ReportController::class, 'compose'])
     ->name('compose-report');
+
+// * USER
+Route::get('presence', [PresenceController::class, 'create'])
+    ->name('create-presence');
+Route::post('presence', [PresenceController::class, 'store']);
+// *
 // ! playground route
 
 // Route::get('playground', [ReportController::class, 'index']);

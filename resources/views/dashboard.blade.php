@@ -23,8 +23,8 @@
             <!-- option starts here -->
             <!-- arrival options-->
             <ul class="section-option" id="arrival-option">
-                <li><a href="{{ route('create-new-template', ['ref' => 'kedatangan']) }}">Create Template</a></li>
-                <li><a href="{{ route('available-templates', ['ref' => 'kedatangan']) }}">Create Post from Existing Template</a></li>
+                <a href="{{ route('create-new-template', ['ref' => 'kedatangan']) }}"><li>Create Template</li></a>
+                <a href="{{ route('available-templates', ['ref' => 'kedatangan']) }}"><li>Create Post from Existing Template</li></a>
                 <li>Create Blank Post</li>
             </ul>
         </div>
@@ -34,16 +34,18 @@
             <span class="section-title">Departure<span class="chevron-right">›</span></span>
             <!-- departure options -->
             <ul class="section-option" id="departure-option">
-                <li><a href="{{ route('create-new-template', ['ref' => 'keberangkatan']) }}">Create Template</a></li>
-                <li><a href="{{ route('available-templates', ['ref' => 'keberangkatan']) }}">Create Post from Existing Template</a></li>
+                <a href="{{ route('create-new-template', ['ref' => 'keberangkatan']) }}"><li>Create Template</li></a>
+                <a href="{{ route('available-templates', ['ref' => 'keberangkatan']) }}"><li>Create Post from Existing Template</li></a>
                 <li>Create Blank Post</li>
             </ul>
         </div>
         <!-- formation section -->
-        <div class="single-section-container" id="formation-section">
-            <img class="arrival-departure-icon" src="media/formation-icon.svg" alt="" srcset="">
-            <span class="section-title">Formation</span>
-        </div>
+        <a href="{{ route('create-presence') }}">
+            <div class="single-section-container" id="formation-section">
+                <img class="arrival-departure-icon" src="media/formation-icon.svg" alt="" srcset="">
+                <span class="section-title">Formation</span>
+            </div>
+        </a>
     </div>
         
 @endsection

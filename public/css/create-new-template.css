@@ -24,7 +24,7 @@ form.main-page-container {
     label:nth-child(1) {
         margin-top: 2rem;
     }
-    button {
+    button[type='submit'] {
         margin-top: 1rem;
         padding-top: 0.3rem;
         padding-bottom: 0.3rem;
@@ -32,7 +32,7 @@ form.main-page-container {
         background: var(--flat-blue-primary);
         color: white;
     }
-    button:hover {
+    button[type='submit']:hover {
         background: var(--flat-blue-secondary);
     }
     input, textarea {

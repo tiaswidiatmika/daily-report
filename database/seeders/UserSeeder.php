@@ -27,6 +27,9 @@ class UserSeeder extends Seeder
         User::factory()->count(1)->create([
             'role' => 'spv'
         ]);
+        User::factory()->count(4)->create([
+            'role' => 'honorer'
+        ]);
         User::factory()->count(1)->create([
             'alias' => 'AGhazali',
             'name' => 'Ahmad Ghazali',
