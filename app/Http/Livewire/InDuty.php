@@ -2,63 +2,36 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\{User, Formation};
 use Livewire\Component;
+use App\Models\Position;
+use App\Models\{User, Formation};
 
 class InDuty extends Component
 {
-    public $allowDuplicateSearches = false;
-
-    // * properties used for search input "Konter Foreigner"
-    public $searchKonterForeigner = '';
-    public $usersKonterForeigner = [];
-    public $usersExcluded = [];
-
-    // * properties  for search input "Konter Indonesia"
-    public $searchKonterIndonesia = '';
-    public $usersKonterIndonesia = [];
-
-    // * properties  for search input "Konter diplo under abtc"
-    public $searchKonterDiplounderabtc = '';
-    public $usersKonterDiplounderabtc = [];
-
-    // * properties  for search input "Konter Indonesia"
-    public $searchCuti = '';
-    public $usersCuti = [];
-
-    // * properties used for search input "Sakit"
-    public $searchSakit = '';
-    public $usersSakit = [];
-
-    // * properties used for search input "Sakit"
-    public $searchIzin = '';
-    public $usersIzin = [];
-    
-    // * protokoler
-    public $searchProtokoler = '';
-    public $usersProtokoler = [];
-
-    // * users retrieved without searching
-    public $usersHonorer;
-    public $usersKaunit;
-    public $usersSpv;
-    public $usersOpis;
-    // * $users is a variable to display list of user while typing on live search
     public $users;
+    public $input;
+    public $textFields;
+    public $searchResult;
+    public $formation;
+    public $haveBeenSelected = [];
 
-    public $usePrevious = true;
-    public $lastFormation;
     public function mount()
     {
-        $this->users = [];
-        // $this->usersExcluded = [];
-        $this->usersHonorer = User::ofRole( 'honorer' )->pluck('name');
-        $this->usersSpv = User::ofRole( 'spv' )->pluck('name');
-        $this->usersOpis = User::ofRole( 'opis' )->pluck('name');
-        $this->usersKaunit = User::ofRole( 'kaunit' )->pluck('name');
-        $this->lastFormation = Formation::orderBy('created_at', 'DESC')->first();
+        $this->users = User::all();
+        $this->textFields = $this->setTextFieldName(); // contains text input value
+        $this->searchResult = $this->setTextFieldName(); // contains result of found user aliases
+        $this->formation = $this->setTextFieldName()->toArray(); // contains selected aliases
     }
-
+    public function setTextFieldName()
+    {
+        $textFields = Position::get('name')->mapWithKeys(
+            function($item) {
+                return [ $item['name'] => [] ];
+            }
+        );
+        return $textFields;
+    }
+    
     public function render()
     {
         return view('livewire.in-duty');
@@ -66,122 +39,39 @@ class InDuty extends Component
 
     public function submit()
     {
-        $formation = Formation::create([
-            'date' => todayIs()->date,
-            'foreigner' => json_encode($this->usersKonterForeigner),
-            'diplomatik' => json_encode($this->usersKonterDiplounderabtc),
-            'cuti' => json_encode( $this->usersCuti ),
-            'izin' => json_encode( $this->usersIzin ),
-            'sakit' => json_encode( $this->usersSakit ),
-            'paspor_indonesia' => json_encode($this->usersKonterIndonesia),
-            'honorer' => json_encode($this->usersHonorer),
-            'protokoler' => json_encode($this->usersProtokoler),
-            'spv' => json_encode($this->usersSpv),
-            'opis' => json_encode($this->usersOpis),
-            'kaunit' => json_encode($this->usersKaunit),
-        ]);
-
+        
     }
-    public function setPrevious ()
+
+    public function search( $position )
     {
-        if ( $this->usePrevious ) {
-            $formation = $this->lastFormation;
-            $this->usersKonterIndonesia = json_decode($formation->honorer) ?? [];
-            $this->usersKonterForeigner = json_decode($formation->foreigner) ?? [];
-            $this->usersKonterDiplounderabtc = json_decode($formation->diplomatik) ?? [];
-            $this->usersCuti = json_decode($formation->cuti) ?? [];
-            $this->usersSakit = json_decode($formation->sakit);
-            $this->usersIzin = json_decode($formation->izin);
-            $this->usersProtokoler = json_decode($formation->protokoler) ?? [];
-            $collection = [
-                ...$this->usersKonterIndonesia,
-                ...$this->usersKonterForeigner,
-                ...$this->usersKonterDiplounderabtc,
-                ...$this->usersCuti,
-                ...$this->usersSakit,
-                ...$this->usersIzin,
-                ...$this->usersProtokoler
-            ];
-            $this->usersExcluded = array_merge($this->usersExcluded, $collection);
-            $this->usePrevious = !$this->usePrevious;
-        } else {
-            $this->usersKonterIndonesia = [];
-            $this->usersKonterForeigner = [];
-            $this->usersKonterDiplounderabtc = [];
-            $this->usersCuti = [];
-            $this->usersSakit = [];
-            $this->usersIzin = [];
-            $this->usersProtokoler = [];
-            $this->usersHonorer = [];
-            $this->usersExcluded = [];
-            $this->usePrevious = !$this->usePrevious;
-        }
-    }
-
-    public function search($wireModel)
-    {   
-        if (empty($this->{$wireModel})) {
-            $this->users = [];
+        if (empty($this->textFields[$position])) {
+            $this->searchResult[$position] = [];
             return;
         }
-        $builder = User::ofRole('staff')->where('alias', 'like', "%{$this->$wireModel}%");
-        if ($this->allowDuplicateSearches) {
-            $this->users = $builder
-                ->take(10)
+        $builder = User::ofRole('staff')->where('alias', 'like', "%{$this->textFields[$position]}%");
+        $this->searchResult[$position] = $builder->take(10)
+                ->whereNotIn('alias', $this->haveBeenSelected)
                 ->get()
-                ->pluck('alias')
-                ->toArray();
-        } else {
-            $this->users = $builder
-                ->whereNotIn('alias', $this->usersExcluded)
-                ->take(10)
-                ->get()
-                ->pluck('alias')
-                ->toArray();
-        }
-    }
-    public function clickResult($result, $wireModel, $userCollectionType)
-    {
-        
-        $this->$wireModel = $result; // manipulate component a wire model
-        
-        array_push($this->$userCollectionType, $result); // some business logic
-        $this->$wireModel = ''; //resetting input inner text
-        
-        array_push($this->usersExcluded, $result);
-        $this->users = []; // resetting </li> users
+                ->pluck('alias');
     }
 
-    public function removeSelectedUser($needle, $hayStack)
+    public function select( $fieldName, $alias )
     {
-        $this->$hayStack = array_diff($this->$hayStack, [$needle] );
-        $this->usersExcluded = array_diff($this->usersExcluded, [$needle]);
-    }
-    public function putLastFormationToExcluded ($collection)
-    {
-        array_push($this->usersExcluded, $collection);
+        // push one new item on array to respective field name
+        array_push( $this->formation[$fieldName], $alias );
+        // clears input field, search result
+        $this->textFields[$fieldName] = '';
+        $this->searchResult[$fieldName] = '';
+
+        // push new item to $this->haveBeenSelected to prevent duplicate entry
+        array_push( $this->haveBeenSelected, $alias );
     }
 
-    public function showarray()
+    public function remove( $fieldName, $needle )
     {
-        $this->array = json_encode($this->usersAvailable);
-        $this->keys = json_encode(array_keys($this->usersAvailable));
+        $hayStack = $this->formation[$fieldName];
+        $this->formation[$fieldName] = array_diff( $hayStack, [$needle] );
+        $this->haveBeenSelected = array_diff( $this->haveBeenSelected, [$needle] );
     }
-
-    public function transformToFullName ( $array ) 
-    {
-        foreach ($array as $key => $value) {
-            foreach ($value as $index => $item) {
-                $array[$key][$index] = $this->fullName( $item );
-            }
-        }
-        return $array;
-    }
-
-    public function fullName(String $name)
-    {   
-        return User::where('alias', $name)
-            ->first()
-            ->name;
-    }
+    
 }

@@ -1,18 +1,36 @@
 <form wire:submit.prevent="submit" method="post" class="main-page-container">
-    @if ($lastFormation !== null)
-        <span>
-            <input type="checkbox" name="previous" id="previous" wire:click="setPrevious">
-            <label for="previous">same as previous</label>
-        </span>
-    @endif
-    <div>
-        @include('livewire.konter-foreigner')
-        @include('livewire.konter-indonesia')
-        @include('livewire.konter-diplounderabtc')
-        @include('livewire.cuti')
-        @include('livewire.sakit')
-        @include('livewire.izin')
-        @include('livewire.protokoler')
-    </div>
-    <button class="p-2 bg-blue-600 text-white" type="submit">submit</button>
+    {{ json_encode($formation) }}
+    @foreach ($textFields as $fieldName => $value)
+        <label for="{{ $fieldName }}">{{ ucfirst( str_replace('_', ' ', $fieldName) ) }}</label>
+        <input
+            type="text"
+            name="{{ $fieldName }}"
+            wire:model="textFields.{{ $fieldName }}"
+            wire:keyup="search('{{ $fieldName }}')"
+            >
+            
+            @if ( $searchResult[$fieldName] )
+                <div class="searchResultContainer">
+                    @foreach ($searchResult[$fieldName] as $item)
+                        <div
+                            class="searchResult"
+                            wire:click="select('{{ $fieldName }}', '{{ $item }}')"
+                        >
+                            {{ $item}}
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+            
+            <div class="selection-container">
+                @foreach ($formation[$fieldName] as $selection)
+                    <span class="selection">
+                        {{ $selection }}
+                        <button
+                            class="remove-selection"
+                            wire:click.prevent="remove('{{ $fieldName }}', '{{ $selection }}')">&times;</button>
+                    </span>
+                @endforeach
+            </div>
+        @endforeach
 </form>
