@@ -16,6 +16,12 @@ class Report extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function formations()
+    {
+        return $this->hasMany(Formation::class);
+    }
+
     public static function checkTodaysReport ()
     {
         $today = todayIs()->date;

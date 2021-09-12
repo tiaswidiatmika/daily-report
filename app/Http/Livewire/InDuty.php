@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Report;
 use Livewire\Component;
 use App\Models\Position;
 use App\Models\{User, Formation};
@@ -18,15 +19,20 @@ class InDuty extends Component
     public function mount()
     {
         $this->users = User::all();
-        $this->textFields = $this->setTextFieldName(); // contains text input value
-        $this->searchResult = $this->setTextFieldName(); // contains result of found user aliases
-        $this->formation = $this->setTextFieldName()->toArray(); // contains selected aliases
+        $this->textFields = $this->setTextFieldIds(); // contains text input value
+        $this->searchResult = $this->setTextFieldIds(); // contains result of found user aliases
+        if ( $this->checkIfThereAreLastFormation() ) {
+            $report = Report::where('date', todayIs()->date)->first();
+            $this->lastFormation( $report->id );
+        } else {
+            $this->formation = $this->setTextFieldIds()->toArray(); // contains selected aliases
+        }
     }
-    public function setTextFieldName()
+    public function setTextFieldIds()
     {
-        $textFields = Position::get('name')->mapWithKeys(
+        $textFields = Position::get('id')->mapWithKeys(
             function($item) {
-                return [ $item['name'] => [] ];
+                return [ $item['id'] => [] ];
             }
         );
         return $textFields;
@@ -34,12 +40,70 @@ class InDuty extends Component
     
     public function render()
     {
+        // check for today's report availability
+
+        
         return view('livewire.in-duty');
+    }
+
+    public function checkIfThereAreLastFormation()
+    {
+        // if there are report
+        $report = Report::where('date', todayIs()->date)->first();
+        // $currentFormationIsExist = Formation::where('report_id', $report->id)->get();
+        if ( $report !== null ) {
+            $checkLastFormation = Formation::where('report_id', $report->id)->get();
+            if ( $checkLastFormation->isNotEmpty() ) {
+                // $this->lastFormation( $report->id );
+                return true;
+            }
+        }
+    }
+    public function lastFormation($reportId  )
+    {
+        // else, get today's formation
+        $currentFormation = Formation::where('report_id', $reportId)
+            ->get()
+            ->groupBy('position_id')
+            ->toArray();
+        
+            foreach ($currentFormation as $positionId => $values) {
+                foreach ($values as $key => $element) {
+                    $currentFormation[$positionId][$key] = User::find($element['user_id'])->alias;
+                }
+            }
+        
+        ksort($currentFormation);
+        $prepareFormation = $this->setTextFieldIds()->toArray();
+        foreach ($prepareFormation as $formationKey => $formationValue) {
+            foreach ($currentFormation as $currentFormationkey => $currentFormationvalue) {
+                if ($currentFormationkey === $formationKey) {
+                    $prepareFormation[$currentFormationkey] = $currentFormationvalue;
+                }
+            }
+        }
+        $this->formation = $prepareFormation;
     }
 
     public function submit()
     {
-        
+        // check for todays report availability, if not exist, create one
+        $report = Report::firstOrCreate( ['date' => todayIs()->date] );
+        $arrangeFormation = $this->formation;
+        foreach ($arrangeFormation as $key => $values) {
+            foreach ($values as $value) {
+                Formation::create([
+                    'report_id' => $report->id,
+                    'position_id' => $key,
+                    'user_id' => User::where('alias', $value)->first()->id
+                ]);
+            }
+        }
+        // $currentFormation = Formation::where('report_id', $report->id)->get()->groupBy('position_id');
+        // return redirect()->route('show-newly-created-formation', ['data' => json_encode( $currentFormation )]);
+        // return redirect()->route('show-newly-created-formation')->with( compact('currentFormation') );
+        session()->flash( 'formation-built', 'current formation has successfully been assembled' );  
+        return redirect()->to('/');
     }
 
     public function search( $position )
@@ -55,13 +119,13 @@ class InDuty extends Component
                 ->pluck('alias');
     }
 
-    public function select( $fieldName, $alias )
+    public function select( $fieldId, $alias )
     {
         // push one new item on array to respective field name
-        array_push( $this->formation[$fieldName], $alias );
+        $this->formation[$fieldId][] = $alias;
         // clears input field, search result
-        $this->textFields[$fieldName] = '';
-        $this->searchResult[$fieldName] = '';
+        $this->textFields[$fieldId] = '';
+        $this->searchResult[$fieldId] = '';
 
         // push new item to $this->haveBeenSelected to prevent duplicate entry
         array_push( $this->haveBeenSelected, $alias );

@@ -1,21 +1,26 @@
 <form wire:submit.prevent="submit" method="post" class="main-page-container">
+    {{ json_encode($formation) }}
     <p class="page-title">Compose presence</p>
-    @foreach ($textFields as $fieldName => $value)
-        <label for="{{ $fieldName }}">{{ ucfirst( str_replace('_', ' ', $fieldName) ) }}</label>
+    @foreach ($textFields as $fieldId => $value)
+        @php
+            $fieldName = \App\Models\Position::find($fieldId)->name;
+        @endphp
+        <strong><label for="{{ $fieldName }}">{{ ucfirst( str_replace('_', ' ', $fieldName) ) }}</label></strong>
         <input
             type="text"
-            name="{{ $fieldName }}"
-            wire:model="textFields.{{ $fieldName }}"
-            wire:keyup="search('{{ $fieldName }}')"
+            autocomplete="off"
+            name="{{ $fieldId }}"
+            wire:model="textFields.{{ $fieldId }}"
+            wire:keyup="search('{{ $fieldId }}')"
             >
-        @if ( !empty($textFields[$fieldName]) )
+        @if ( !empty($textFields[$fieldId]) )
             
-            @if ( !empty($searchResult[$fieldName]) )
+            @if ( !empty($searchResult[$fieldId]) )
                 <div class="searchResultContainer">
-                    @foreach ($searchResult[$fieldName] as $item)
+                    @foreach ($searchResult[$fieldId] as $item)
                         <div
                             class="searchResult"
-                            wire:click="select('{{ $fieldName }}', '{{ $item }}')"
+                            wire:click="select('{{ $fieldId }}', '{{ $item }}')"
                         >
                             {{ $item}}
                         </div>
@@ -24,16 +29,16 @@
             @endif
             <span class="searchResultContainer">no user found</span>
         @endif    
-        
             <div class="selection-container">
-                @foreach ($formation[$fieldName] as $selection)
+                @foreach ($formation[$fieldId] as $alias)
                     <span class="selection">
-                        {{ $selection }}
+                        {{ $alias }}
                         <button
                             class="remove-selection"
-                            wire:click.prevent="remove('{{ $fieldName }}', '{{ $selection }}')">&times;</button>
+                            wire:click.prevent="remove('{{ $fieldId }}', '{{ $alias}}')">&times;</button>
                     </span>
                 @endforeach
             </div>
         @endforeach
+    <button type="submit">submit</button>
 </form>
