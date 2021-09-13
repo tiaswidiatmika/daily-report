@@ -68,10 +68,13 @@ Route::get('report/today', [ReportController::class, 'today'])
 Route::get('report/compose', [ReportController::class, 'compose'])
     ->name('compose-report');
 
-// * USER
+// * Presence
 Route::get('presence', [PresenceController::class, 'create'])
     ->name('create-presence');
-Route::post('presence', [PresenceController::class, 'store']);
+// Route::get('presence-report', [PresenceController::class, 'show'])
+//     ->name('presence-report');
+// Route::get('presen', [PresenceController::class, 'showNewlyCreated'])
+//     ->name('show-newly-created-formation');
 // *
 // ! playground route
 

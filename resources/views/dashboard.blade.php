@@ -6,9 +6,16 @@
 
 @section('jsfiles')
     <script src="{{ asset('js/dashboard.js') }}" defer></script>
+    <script defer src="https://unpkg.com/alpinejs@3.3.2/dist/cdn.min.js"></script>
 @endsection
 
 @section('content')
+    @if (session('formation-built'))
+        <x-flash-message>
+            {{ session('formation-built') }}
+        </x-flash-message>
+    @endif
+
     <div class="pick-a-section-container">
         @if ( $todaysPostIsExist )
             <a class="build-report" href="{{ route('todays-report') }}">Build</a>

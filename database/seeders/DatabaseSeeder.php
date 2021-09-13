@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ReportSeeder::class,
             TemplateSeeder::class,
             PostSeeder::class,
+            PositionSeeder::class,
         ]);
     }
 }

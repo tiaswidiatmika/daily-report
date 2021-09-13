@@ -12,12 +12,19 @@
         h2 {
             margin-bottom: 0.5rem;
         }
+        .selection-container {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
         .selection {
             margin-right: 0.4rem;
             border: 1px solid var(--text-primary);
-            margin-bottom: 2rem;
+            margin-top: 0.2rem;
             padding: 0.2rem;
             border-radius: 3px;
+            width: fit-content; 
         }
         .remove-selection {
             width: 1rem;
@@ -34,6 +41,9 @@
             border-radius: 4px;
             border: 1px solid var(--text-primary);
         }
+        /* .searchResultContainer {
+            margin-top: 1rem;
+        } */
         .searchResult {
             list-style: none;
             margin: 0;
