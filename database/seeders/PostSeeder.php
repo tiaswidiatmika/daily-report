@@ -29,7 +29,7 @@ class PostSeeder extends Seeder
             'chronology' => "Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei dilakukan pada pukul 13.40 WITA",
             'measure' => "Melaporkan kejadian tersebut pada pimpinan. Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.",
             'conclusion' => "Bahwa telah dilakukan Pengawasan Keberangkatan terhadap 3 (Tiga) orang kru stay on board Pesawat CI 2771 dengan rute penerbangan Denpasar-Taipei.",
-            'qrcode' => 'rKhMzzoEFLeapost_id3.png',
+            'qrcode' => 'seederqrcode.png',
         ]);
 
     }
