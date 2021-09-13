@@ -1,5 +1,4 @@
 <form wire:submit.prevent="submit" method="post" class="main-page-container">
-    {{ json_encode($formation) }}
     <p class="page-title">Compose presence</p>
     @foreach ($textFields as $fieldId => $value)
         @php

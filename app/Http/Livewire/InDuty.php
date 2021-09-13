@@ -14,15 +14,16 @@ class InDuty extends Component
     public $textFields;
     public $searchResult;
     public $formation;
-    public $haveBeenSelected = [];
-
+    public $haveBeenSelected;
+    public $todaysReport;
     public function mount()
     {
         $this->users = User::all();
         $this->textFields = $this->setTextFieldIds(); // contains text input value
         $this->searchResult = $this->setTextFieldIds(); // contains result of found user aliases
-        if ( $this->checkIfThereAreLastFormation() ) {
+        if ( $this->hasFormationBeenSet() ) {
             $report = Report::where('date', todayIs()->date)->first();
+            $this->todaysReport = $report;
             $this->lastFormation( $report->id );
         } else {
             $this->formation = $this->setTextFieldIds()->toArray(); // contains selected aliases
@@ -46,7 +47,7 @@ class InDuty extends Component
         return view('livewire.in-duty');
     }
 
-    public function checkIfThereAreLastFormation()
+    public function hasFormationBeenSet()
     {
         // if there are report
         $report = Report::where('date', todayIs()->date)->first();
@@ -59,7 +60,7 @@ class InDuty extends Component
             }
         }
     }
-    public function lastFormation($reportId  )
+    public function lastFormation( $reportId  )
     {
         // else, get today's formation
         $currentFormation = Formation::where('report_id', $reportId)
@@ -75,10 +76,16 @@ class InDuty extends Component
         
         ksort($currentFormation);
         $prepareFormation = $this->setTextFieldIds()->toArray();
+        // store last formation to new formation, based on their key
         foreach ($prepareFormation as $formationKey => $formationValue) {
-            foreach ($currentFormation as $currentFormationkey => $currentFormationvalue) {
-                if ($currentFormationkey === $formationKey) {
-                    $prepareFormation[$currentFormationkey] = $currentFormationvalue;
+            foreach ($currentFormation as $currentFormationKey => $currentFormationValue) {
+                if ($currentFormationKey === $formationKey) {
+                    $prepareFormation[$currentFormationKey] = $currentFormationValue;
+                    // e.g. $currentFormationValue = array:2 [▼ 0 => "Banawi", 1 => "Fitriani"]
+                    foreach ($currentFormationValue as $alias) {
+                        // push to has been selected
+                        $this->haveBeenSelected[] = $alias;
+                    }
                 }
             }
         }
@@ -87,8 +94,13 @@ class InDuty extends Component
 
     public function submit()
     {
+        // check if there are any formation for today
+        if ( $this->hasFormationBeenSet() ) {
+            $this->destroyPreviousFormation();
+        }
         // check for todays report availability, if not exist, create one
         $report = Report::firstOrCreate( ['date' => todayIs()->date] );
+        // if there is formation for today delete the
         $arrangeFormation = $this->formation;
         foreach ($arrangeFormation as $key => $values) {
             foreach ($values as $value) {
@@ -99,11 +111,17 @@ class InDuty extends Component
                 ]);
             }
         }
-        // $currentFormation = Formation::where('report_id', $report->id)->get()->groupBy('position_id');
-        // return redirect()->route('show-newly-created-formation', ['data' => json_encode( $currentFormation )]);
-        // return redirect()->route('show-newly-created-formation')->with( compact('currentFormation') );
+        
         session()->flash( 'formation-built', 'current formation has successfully been assembled' );  
         return redirect()->to('/');
+    }
+
+    public function destroyPreviousFormation()
+    {
+        $report = $this->todaysReport;
+        $formationIds = Formation::where('report_id', $report->id)->get()->pluck('id');
+        // e.g. $formationIds is a collection of [8,9,10,11]
+        Formation::destroy( $formationIds );
     }
 
     public function search( $position )
