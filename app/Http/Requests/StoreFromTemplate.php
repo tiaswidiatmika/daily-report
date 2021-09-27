@@ -24,19 +24,14 @@ class StoreFromTemplate extends FormRequest
     public function rules()
     {
         $template = \App\Models\Template::find(FormRequest::get('templateId'));
-        $inputs = $template->setupInputs();
-
-        // * get dynamic columns from template model method 'setupInputs()'
+        $rules = collect($template->dynamicColumns);
+        // * get dynamic columns from template model method 'removeBracketsFromPattern()'
         // * make a new variable to hold the specified resource, but using collect()
         // * iterate through new variable, modify each value using key => value, 
         // * key => value is item => 'required'
-        $tryToValidate = [];
-        foreach ($inputs as $item) {
-            $item = str_replace(' ', '_', $item);
-            $tryToValidate[$item] = 'required';
-        }
-        // dd ($tryToValidate);
-        return $tryToValidate;
         
+        return $rules->mapWithKeys( function( $rule ) {
+            return [$rule => 'required'];
+        } )->toArray();
     }
 }

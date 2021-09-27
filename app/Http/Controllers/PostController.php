@@ -30,22 +30,20 @@ class PostController extends Controller
     public function interpolateStringFromTemplate($templateId, $request)
     {
         $template = Template::find($templateId);
-        $columnsToFill = $template->getFillables();
-        
-        $inputs = $template->setupInputs();
+        $templateFillable = $template->getFillable();
+        $dynamicColumns = $request->only( $template->dynamicColumns );
         $container = [];
-        
-        foreach ($columnsToFill as $tableColumn) {
-            $sentence = $template->$tableColumn;
-            foreach ($inputs as $input) {
-                $pattern = '/\[' . $input . '\]/';
-                $input = preg_replace('/\s/', '_', $input);
-                $sentence = preg_replace($pattern, $request->$input, $sentence);
+
+        foreach ($templateFillable as $column) {
+            $target = $template->$column;
+            foreach ($dynamicColumns as $pattern => $replacement) {
+                $pattern = '['.replaceUnderScore($pattern).']';
+                $pattern = preg_quote($pattern, '/');
+                $target = preg_replace('/'.$pattern.'/', $replacement, $target);
             }
-            $container[$tableColumn] = $sentence;
+            $container[$column] = $target;
         }
         return $container;
-
     }
 
     public function index()
@@ -54,15 +52,6 @@ class PostController extends Controller
         return Post::all()->sortByDesc('created_at');
     }
 
-    public function dashboard() {
-        // check if there any post created that day
-        $todaysDate = todayIs()->date;
-        $todaysPost = Post::where('date', $todaysDate)->first() !== null ? true : false;
-        // pass its value to buil report button in dashboard view
-        return view('dashboard', [
-            'todaysPostIsExist' => $todaysPost,
-        ]);
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -85,6 +74,7 @@ class PostController extends Controller
         $post = Post::create(
             [
                 'report_id' => $report->id,
+                'title' => Template::find($request->templateId)->template_name,
                 'section' => $request->ref,
                 'user_id' => 1,
                 'date' => $request->date,
@@ -96,9 +86,10 @@ class PostController extends Controller
 
     public function storeFromTemplate(StoreFromTemplate $request)
     {
+        // dd($request->all());
         $request->validated();
         // first or create todays report
-        $report = ReportController::today();
+        $report = ReportController::firstOrCreate();
         // prepare new post
         $newPost = $this->interpolateStringFromTemplate($request->templateId, $request);
         // persist all
@@ -107,8 +98,12 @@ class PostController extends Controller
         PostController::createQrCodePng( $post );
         // store any attachments
         Attachment::store($request, $post->id);
-        return $this->showPdf( $post->id );
+        // disable show pdf to make a build report test
+        // return $this->showPdf( $post->id );
         // return view ( 'single-report', compact( 'post' ) );
+
+        // instead, return to dashboard
+        return redirect('/');
         
     }
 
@@ -121,13 +116,15 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::find( $id );
-        return view('single-report', [
-            'post' => $post,
-            'qr' => $this->buildQrCode( $id ),
-            'attachment' => $post->attachments()
-                ->where('post_id', '=', $post->id)
-                ->get(),
-        ]);
+        // return view('single-report', [
+        //     'post' => $post,
+        //     'qr' => $this->buildQrCode( $id ),
+        //     'attachment' => $post->attachments()
+        //         ->where('post_id', '=', $post->id)
+        //         ->get(),
+        // ]);
+        $isStreamingPdf = false;
+        return view('report.single-post', compact('post', 'isStreamingPdf'));
     }
 
     /**
@@ -166,7 +163,7 @@ class PostController extends Controller
 
     public static function showPdf( $id )
     {
-        $post = Post::find( $id );   
+        $post = Post::find( $id );
         $pdf = PDF::loadView('single-report', compact('post'));
         return $pdf->stream('report.pdf');
     }
@@ -176,5 +173,14 @@ class PostController extends Controller
         $qrFileName = QrCode::write( $post->id );
         $post->qrcode = $qrFileName;
         $post->save();
+    }
+
+    public function testing()
+    {
+        $report = Report::find(1);
+        $posts = $report->posts()->get();
+        $isStreamingPdf = true;
+        $pdf = PDF::loadView('report.pdf-composed', compact('posts', 'isStreamingPdf'));
+        return $pdf->stream('report.pdf');
     }
 }

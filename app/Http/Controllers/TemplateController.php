@@ -62,7 +62,7 @@ class TemplateController extends Controller
     {   
         $ref = $request->query('ref');
         $template = Template::find($id);
-        $inputs = $template->setupInputs();
+        $inputs = $template->dynamicColumns;
         return view('create-from-template-form', [
             'template' => $template,
             'inputNames' => $inputs,

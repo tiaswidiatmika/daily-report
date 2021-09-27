@@ -15,3 +15,21 @@ if ( !function_exists('todayIs') ) {
         return $obj;
     }
 }
+
+if ( !function_exists('replaceWhiteSpace') ) {
+    function replaceWhiteSpace( $haystack ) {
+        return preg_replace('/\s/', '_', $haystack);
+    }
+}
+if ( !function_exists('replaceSquareBrackets') ) {
+    function replaceSquareBrackets( $haystack ) {
+        return preg_replace('/\[|\]/', '', $haystack);
+    }
+}
+
+if ( !function_exists('replaceUnderScore') ) {
+    function replaceUnderScore( $haystack ) {
+        return str_replace('_', ' ', $haystack);
+    }
+}
+

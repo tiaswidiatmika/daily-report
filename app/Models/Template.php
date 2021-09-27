@@ -14,11 +14,7 @@ class Template extends Model
 
     
     protected $fillable = ['template_name', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
-    
-    public function getFillables()
-    {
-        return $this->fillable;
-    }
+        
     protected function fillablesSentences()
     {
         $sentence = '';
@@ -37,25 +33,48 @@ class Template extends Model
         // return matches, but still in square brackets
     }
     
-    public function getUniqueWords()
+    public function getPatternsAttribute()
     {
-
         return array_unique($this->extractWords());
         // get unique matches, but still contains []
     }
 
-    public function setupInputs()
+    public function getDynamicColumnsAttribute()
     {
-        $textTypeInputName = [];
-        $replaceSquareBracketsPattern = '/\[|\]/';
-        foreach ($this->getUniqueWords() as $match) {
-            $textTypeInputName[] = preg_replace($replaceSquareBracketsPattern, '', $match);
-        }
-
-        // result, array with only word
-        return $textTypeInputName;
-        
+        $attributes = collect($this->patterns);
+        return $attributes->map( function ( $attribute ) {
+            return replaceWhiteSpace( replaceSquareBrackets($attribute) );
+        } )->toArray();
     }
+
+    public function getPatternsForInputLabelAttribute()
+    {
+        $attributes = collect($this->patterns);
+        return $attributes->map( function ( $attribute ) {
+            return ucwords( replaceSquareBrackets($attribute) );
+        } )->toArray();
+    }
+
+
+    // public function removeBracketsFromPattern()
+    // {
+    //     $textTypeInputName = [];
+    //     $pattern = '/\[|\]/';
+    //     $uniqueWords = collect( $this->patterns );
+    //     $uniqueWords = $uniqueWords->mapWithKeys( function( $word ) use ($pattern) {
+    //         $word = preg_replace($pattern, '', $word);
+    //         $word = preg_replace('/\s/', '_', $word);
+    //         $word = 
+    //     } );
+    //     dd( $uniqueWords );
+    //     // foreach ($this->patterns as $match) {
+    //     //     $textTypeInputName[] = preg_replace($replaceSquareBracketsPattern, '', $match);
+    //     // }
+
+    //     // result, array with only word
+    //     return $textTypeInputName;
+        
+    // }
 
     // generate slugs
     // public function getSlugOptions() : SlugOptions
