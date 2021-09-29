@@ -1,17 +1,31 @@
-<form wire:submit.prevent="submit" method="post" class="main-page-container">
+<form
+    wire:submit.prevent="submit"
+    method="post"
+    class="main-page-container"
+    wire:keydown.escape="clearResults()"
+>
+    {{-- {{ dd($this->formation) }} --}}
+    
+    @if ( $formationHasBeenSet )
+
+        {{-- <a href="{{ route('presence-report', ['formation' => json_encode($formation)]) }}">Preview result</a> --}}
+        <a href="{{ route('presence-report') }}">Preview result</a>
+
+    @endif
     <p class="page-title">Compose presence</p>
+
     @foreach ($textFields as $fieldId => $value)
         @php
-            $fieldName = \App\Models\Position::find($fieldId)->name;
+            $field = \App\Models\Position::find($fieldId);
         @endphp
-        <strong><label for="{{ $fieldName }}">{{ ucfirst( str_replace('_', ' ', $fieldName) ) }}</label></strong>
+        <strong><label for="{{ $field }}">{{ $field->display_name }}</label></strong>
         <input
             type="text"
             autocomplete="off"
             name="{{ $fieldId }}"
             wire:model="textFields.{{ $fieldId }}"
             wire:keyup="search('{{ $fieldId }}')"
-            >
+        >
         @if ( !empty($textFields[$fieldId]) )
             
             @if ( !empty($searchResult[$fieldId]) )

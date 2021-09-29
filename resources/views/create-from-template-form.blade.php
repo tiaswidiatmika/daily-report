@@ -26,7 +26,7 @@
         @foreach ($inputNames as $input)
             <label 
                 class=""
-                for="{{ $input }}">{{ ucfirst($input) }}</label>
+                for="{{ $input }}">{{ ucwords( replaceUnderScore($input) ) }}</label>
             <input 
                 class=""
                 type="text" name="{{ str_replace(' ', '_', $input) }}"

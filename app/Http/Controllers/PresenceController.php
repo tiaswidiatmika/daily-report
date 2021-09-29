@@ -20,9 +20,26 @@ class PresenceController extends Controller
         return $retrievedUserId;
     }
 
+    public function show ()
+    {
+        // $formations = ReportController::firstOrCreate()->formations()->get()->groupBy('position_id');
+        return view('report.presence-skeleton', PresenceController::prepare());
+    }
+
     public function create ()
     {
         return view('livewire.presence-form');
+    }
+
+    public static function prepare ()
+    {
+        $typePresent = Position::where('countAbsent', false)->pluck('id')->toArray();
+        $formations = ReportController::firstOrCreate()->formations()
+            ->with(['user', 'position'])
+            ->get();
+        $attendees = $formations->whereIn('position_id', $typePresent)->groupBy('position_id');
+        $absentees =  $formations->whereNotIn('position_id', $typePresent)->groupBy('position_id');
+        return compact('attendees', 'absentees');
     }
     
 

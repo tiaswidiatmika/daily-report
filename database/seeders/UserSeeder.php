@@ -34,12 +34,12 @@ class UserSeeder extends Seeder
             'alias' => 'AGhazali',
             'name' => 'Ahmad Ghazali',
             'role' => 'kaunit',
-            'nip' => '198703032007011003'
+            'nip' => '19870303 200701 1 003'
         ]);
         User::factory()->count(3)->create([
             'role' => 'opis'
         ]);
-        User::factory()->count(20)->create();
+        User::factory()->count(5)->create();
 
         // User::factory()
         //     ->count(2)

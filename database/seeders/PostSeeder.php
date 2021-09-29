@@ -20,6 +20,7 @@ class PostSeeder extends Seeder
         // protected $fillable = ['user_id','title', 'case', 'summary', 'chronology', 'measure', 'conclusion'];
         Post::create([
             'report_id' => \App\Models\Report::today()->id,
+            'title' => 'Penerbang Reguler',
             'section' => 'arrival',
             'user_id' => 1,
             'date' => todayIs()->date,

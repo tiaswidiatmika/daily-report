@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 use PDF;
 
 use App\Models\Post;
+use ReflectionClass;
 use App\Models\Report;
 use Illuminate\Http\Request;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PresenceController;
 
 
 class ReportController extends Controller
@@ -17,8 +19,21 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
-    public function index()
+    public function __construct() {
+        $this->report = ReportController::getReport();
+    }
+
+    public function index ()
+    {
+        $sections = $this->sections();
+        $report = $this->report;
+        $reportSections = $this->getReportSkeleton( $sections );
+        return view('report-build-container', compact('report', 'reportSections'));
+        // dd(compact(['sections', 'report', 'posts', 'presence']));
+        // return view ('report-build-container', compact(['sections', 'report', 'posts', 'formation']));
+    }
+
+    public function build()
     {   
         $report = Report::today(); 
         $posts = $report->posts ?? collect();
@@ -35,12 +50,46 @@ class ReportController extends Controller
         return $report;
     }
 
+    private function getReportSkeleton( Array $relations )
+    {
+        $skeleton = array();
+        foreach ($relations as $relation) {
+            $skeleton[$relation] = $this->getRelatedModel($relation);
+        }
+        return $skeleton;
+    }
+
+    static public function getReport ( $specifiedDate = null )
+    {
+        return Report::where('build_completed', false)
+            ->orderByDesc('created_at')
+            ->first();
+    }
+    private function sections ()
+    {
+        // now there are only two sections
+        return ['formations', 'posts'];
+    }
+    private function getRelatedModel ( $stringModel )
+    {
+        return $this->report->$stringModel()->get();
+    }
+
     public function compose ()
     {
         $report = Report::today();
         return PdfController::viewComposed ( $report );
     }
 
+    public function combine ( Request $request)
+    {
+        $posts = collect($request->get('posts'));
+        $posts = $posts->map( function( $id ) {
+            return Post::find($id);
+        } );
+        $isStreamingPdf = false;
+        return view('report.composed-report', compact('posts', 'isStreamingPdf') + PresenceController::prepare());
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -106,5 +155,18 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         //
+    }
+
+    public static function assertReportStatus()
+    {
+        // to check is there are report with build complete status == false
+        return ReportController::getReport() !== null;
+    }
+
+    public static function firstOrCreate()
+    {
+        return ReportController::assertReportStatus() ?
+            ReportController::getReport() :
+            Report::create( ['date' => todayIs()->date] ) ;
     }
 }

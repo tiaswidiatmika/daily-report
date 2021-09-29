@@ -8,5 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Position extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'countAbsent'];
+    
+    public function getDisplayNameAttribute()
+    {
+        return ucwords( str_replace('_', ' ', $this->name) );
+    }
 }

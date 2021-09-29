@@ -13,7 +13,7 @@ class Post extends Model
     use HasFactory;
     // use HasSlug;
 
-    protected $fillable = ['report_id', 'section', 'user_id','date', 'time', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'qrcode'];
+    protected $fillable = ['report_id', 'section', 'user_id','date', 'time', 'title', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'qrcode'];
     protected $with = ['attachments'];
 
 

@@ -6,6 +6,7 @@ use App\Models\Report;
 use Livewire\Component;
 use App\Models\Position;
 use App\Models\{User, Formation};
+use App\Http\Controllers\ReportController;
 
 class InDuty extends Component
 {
@@ -14,15 +15,17 @@ class InDuty extends Component
     public $textFields;
     public $searchResult;
     public $formation;
-    public $haveBeenSelected;
+    public $formationHasBeenSet = false;
+    public $haveBeenSelected = [];
     public $todaysReport;
     public function mount()
     {
         $this->users = User::all();
         $this->textFields = $this->setTextFieldIds(); // contains text input value
         $this->searchResult = $this->setTextFieldIds(); // contains result of found user aliases
-        if ( $this->hasFormationBeenSet() ) {
-            $report = Report::where('date', todayIs()->date)->first();
+        $this->formationHasBeenSet = $this->hasFormationBeenSet();
+        if ( $this->formationHasBeenSet ) {
+            $report = ReportController::getReport();
             $this->todaysReport = $report;
             $this->lastFormation( $report->id );
         } else {
@@ -50,7 +53,7 @@ class InDuty extends Component
     public function hasFormationBeenSet()
     {
         // if there are report
-        $report = Report::where('date', todayIs()->date)->first();
+        $report = ReportController::getReport();
         // $currentFormationIsExist = Formation::where('report_id', $report->id)->get();
         if ( $report !== null ) {
             $checkLastFormation = Formation::where('report_id', $report->id)->get();
@@ -98,8 +101,10 @@ class InDuty extends Component
         if ( $this->hasFormationBeenSet() ) {
             $this->destroyPreviousFormation();
         }
+
+        // check last report build status
         // check for todays report availability, if not exist, create one
-        $report = Report::firstOrCreate( ['date' => todayIs()->date] );
+        $report = ReportController::firstOrCreate();
         // if there is formation for today delete the
         $arrangeFormation = $this->formation;
         foreach ($arrangeFormation as $key => $values) {
@@ -156,4 +161,12 @@ class InDuty extends Component
         $this->haveBeenSelected = array_diff( $this->haveBeenSelected, [$needle] );
     }
     
+    public function clearResults()
+    {
+        $this->textFields = $this->textFields->map(
+            function( $item ) {
+                $item = '';
+            }
+        );
+    }
 }

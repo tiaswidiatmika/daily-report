@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    <title>Homepage</title>
+    <title>TPI Daily Report</title>
 @endsection
 
 @section('jsfiles')
@@ -18,7 +18,7 @@
 
     <div class="pick-a-section-container">
         @if ( $todaysPostIsExist )
-            <a class="build-report" href="{{ route('todays-report') }}">Build</a>
+            <a class="build-report" href="{{ route('build-report-index') }}">Build</a>
         @endif
 
         <span class="main-page-title">Pick a Section</span>

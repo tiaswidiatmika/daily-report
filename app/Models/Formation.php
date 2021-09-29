@@ -10,6 +10,15 @@ class Formation extends Model
     use HasFactory;
     
     protected $fillable = ['report_id', 'position_id', 'user_id'];
-    
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ use App\Http\Controllers\TemplateController;
 |
 */
 
-Route::get('/', [PostController::class, 'dashboard'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // ** TEMPLATE
 // * show list of templates
@@ -60,19 +61,22 @@ Route::get('post/show-pdf/{id}', [PostController::class, 'showPdf'])
 Route::get('post/{id}', [PostController::class, 'show'])
     ->name('show-post');
 
+Route::get('testing', [PostController::class, 'testing']);
 // * REPORT
 // * show all
-Route::get('report', [ReportController::class, 'index']);
-Route::get('report/today', [ReportController::class, 'today'])
-    ->name('todays-report');
+// Route::get('report', [ReportController::class, 'index']);
+Route::get('report/build', [ReportController::class, 'index'])
+    ->name('build-report-index');
+Route::get('report/combine', [ReportController::class, 'combine'])
+    ->name('combine-report');
 Route::get('report/compose', [ReportController::class, 'compose'])
     ->name('compose-report');
 
 // * Presence
 Route::get('presence', [PresenceController::class, 'create'])
     ->name('create-presence');
-// Route::get('presence-report', [PresenceController::class, 'show'])
-//     ->name('presence-report');
+Route::get('presence-report', [PresenceController::class, 'show'])
+    ->name('presence-report');
 // Route::get('presen', [PresenceController::class, 'showNewlyCreated'])
 //     ->name('show-newly-created-formation');
 // *

@@ -17,6 +17,7 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->foreignId('report_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
             $table->string('section');
             $table->text('date'); // to hold hari, zona waktu. eg. "Senin, 2 Januari 2020" in string
             $table->text('time'); // to hold jam & zona waktu. eg. "12:69 - 69:12 Waktu timor timur selatan" in string
