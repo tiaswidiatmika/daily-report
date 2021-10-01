@@ -1,8 +1,6 @@
 @php
         use App\Models\{User, Position};
-        $exceptKaunit = User::ofRole('exceptKaunit')->get();
         $total = $exceptKaunit->count();
-        $honorer = User::ofRole('honorer')->pluck('name');
         $asistenSpv = User::ofRole('asisten_spv')->pluck('name');
         $present = $attendees->flatten()->count();
         $absent = $absentees->flatten()->count();
@@ -10,11 +8,6 @@
             ->whereNotIn('id', Position::exemptedFromReport());
         $absentPos = Position::typeAbsent()->get();
         
-        $notOnTheList = $exceptKaunit->pluck('id')
-            ->diff( $onTheList );
-        $notOnTheList = $notOnTheList->map( function( $id ) {
-            return User::find($id)->name;
-        } );
     @endphp
 
 <table class="text-center w-100percent">
@@ -67,16 +60,6 @@
         </tr>
     @endif
 @endforeach
-    <tr>
-        <td>
-            Honorer:
-            <ol>
-                @foreach ($honorer as $item)
-                    <li>{{ $item }}</li>
-                @endforeach
-            </ol>
-        </td>
-    </tr>
 </table>
 <br>
 

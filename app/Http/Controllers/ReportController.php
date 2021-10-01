@@ -29,8 +29,6 @@ class ReportController extends Controller
         $report = $this->report;
         $reportSections = $this->getReportSkeleton( $sections );
         return view('report-build-container', compact('report', 'reportSections'));
-        // dd(compact(['sections', 'report', 'posts', 'presence']));
-        // return view ('report-build-container', compact(['sections', 'report', 'posts', 'formation']));
     }
 
     public function build()
@@ -91,6 +89,10 @@ class ReportController extends Controller
         return view('report.composed-report', compact('posts', 'isStreamingPdf') + PresenceController::prepare());
     }
 
+    public function finish( Request $request )
+    {
+        dd($request->all());
+    }
     /**
      * Show the form for creating a new resource.
      *

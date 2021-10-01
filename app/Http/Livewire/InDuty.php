@@ -48,17 +48,16 @@ class InDuty extends Component
     {
         collect( self::STATIC_POSITIONS )->map(
             function ( $posName ) {
-                return $this->formation[
-                    Position::where('name', $posName)
-                    ->first()->id] = User::ofRole($posName)->pluck('alias');
+                $users = User::ofRole($posName)->pluck('alias')->toArray();
+                $posId = Position::where('name', $posName)->first()->id;
+                $this->formation[$posId] = $users;
+                $this->haveBeenSelected += $users ;
             }
         );
     }
     
     public function render()
     {
-        // check for today's report availability
-        // dd($this->formation);        
         return view('livewire.in-duty');
     }
 
@@ -66,14 +65,14 @@ class InDuty extends Component
     {
         // if there are report
         $report = ReportController::getReport();
-        // $currentFormationIsExist = Formation::where('report_id', $report->id)->get();
+
         if ( $report !== null ) {
             $checkLastFormation = Formation::where('report_id', $report->id)->get();
             if ( $checkLastFormation->isNotEmpty() ) {
-                // $this->lastFormation( $report->id );
                 return true;
             }
         }
+        return false;
     }
     public function lastFormation( $reportId  )
     {

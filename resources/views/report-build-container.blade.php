@@ -15,11 +15,10 @@
             'checked' : 'disabled';
     @endphp
     {{-- section for presence --}}
-    <form action="{{ route('combine-report') }}">
+    <form action="{{ route('combine-report', compact('report')) }}">
         @csrf
         @method('post')
     <h3>Laporan Kehadiran</h3>
-
     <ul>
         <li>
             <label for="presence">
@@ -50,7 +49,9 @@
             </li>
         @endforeach
     </ul>
-    <button type="submit">sumbit</button>
+    @if ( $reportSections['formations']->isNotEmpty() && $reportSections['posts']->isNotEmpty() )
+        <button type="submit">combine</button>
+    @endif
     </form>
     
 

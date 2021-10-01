@@ -71,6 +71,7 @@ Route::get('report/combine', [ReportController::class, 'combine'])
     ->name('combine-report');
 Route::get('report/compose', [ReportController::class, 'compose'])
     ->name('compose-report');
+Route::post('report/finish', [ReportController::class, 'finish'])->name('report-completion');
 
 // * Presence
 Route::get('presence', [PresenceController::class, 'create'])

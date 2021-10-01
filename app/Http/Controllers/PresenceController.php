@@ -22,8 +22,8 @@ class PresenceController extends Controller
 
     public function show ()
     {
-        // $formations = ReportController::firstOrCreate()->formations()->get()->groupBy('position_id');
-        return view('report.presence-skeleton', PresenceController::prepare());
+        $isStreamingPdf = false;
+        return view('report.presence-report', compact($isStreamingPdf) + PresenceController::prepare());
     }
 
     public function create ()
@@ -44,10 +44,19 @@ class PresenceController extends Controller
         $attendees = $formations->whereIn('position_id', $typePresent)->groupBy('position_id');
         $absentees =  $formations->whereNotIn('position_id', $typePresent)->groupBy('position_id');
 
+        $exceptKaunit = User::ofRole('exceptKaunit')->get();
+
+
         $onTheList = $attendees->flatten()->pluck('user_id')
             ->merge($absentees->flatten()->pluck('user_id'));
 
-        return compact('report', 'attendees', 'absentees', 'onTheList');
+        $notOnTheList = $exceptKaunit->pluck('id')
+            ->diff( $onTheList )
+            ->map( function( $id ) {
+                return User::find($id)->name;
+            } );
+            
+        return compact('report', 'attendees', 'absentees', 'exceptKaunit', 'notOnTheList');
     }
     
 

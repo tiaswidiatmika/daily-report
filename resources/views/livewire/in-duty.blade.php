@@ -4,12 +4,8 @@
     class="main-page-container"
     wire:keydown.escape="clearResults()"
 >
-    
     @if ( $formationHasBeenSet )
-
-        {{-- <a href="{{ route('presence-report', ['formation' => json_encode($formation)]) }}">Preview result</a> --}}
         <a href="{{ route('presence-report') }}">Preview result</a>
-
     @endif
     <p class="page-title">Compose presence</p>
 
