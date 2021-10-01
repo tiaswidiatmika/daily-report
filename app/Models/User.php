@@ -43,6 +43,9 @@ class User extends Authenticatable
 
     public function scopeOfRole($query, $type)
     {
+        if ( $type == 'exceptKaunit' ) {
+            return $query->where('role', '!=', 'kaunit');
+        }
         return $query->where('role', $type);
     }
 }

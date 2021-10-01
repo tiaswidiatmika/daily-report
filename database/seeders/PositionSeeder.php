@@ -14,19 +14,19 @@ class PositionSeeder extends Seeder
      */
     public function run()
     {
-        $positionPresent = ['foreigner', 'paspor_indonesia', 'diplomatik', 'protokoler'];
+        $positionPresent = ['foreigner', 'paspor_indonesia', 'diplomatik', 'protokoler', 'spv', 'asisten_spv', 'honorer'];
         $positionAbsent = ['cuti', 'izin', 'sakit'];
         foreach ($positionPresent as $position) {
             Position::create([
                 'name' => $position,
-                'countAbsent' => false
+                'count_absent' => false
             ]);
         }
 
         foreach ($positionAbsent as $position) {
             Position::create([
                 'name' => $position,
-                'countAbsent' => true
+                'count_absent' => true
             ]);
         }
         

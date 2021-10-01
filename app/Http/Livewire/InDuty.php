@@ -18,6 +18,7 @@ class InDuty extends Component
     public $formationHasBeenSet = false;
     public $haveBeenSelected = [];
     public $todaysReport;
+    const STATIC_POSITIONS = ['spv', 'asisten_spv', 'honorer'];
     public function mount()
     {
         $this->users = User::all();
@@ -29,7 +30,8 @@ class InDuty extends Component
             $this->todaysReport = $report;
             $this->lastFormation( $report->id );
         } else {
-            $this->formation = $this->setTextFieldIds()->toArray(); // contains selected aliases
+            $this->formation = $this->setTextFieldIds()->toArray();
+            $this->setUsersInStaticPosition();
         }
     }
     public function setTextFieldIds()
@@ -41,12 +43,22 @@ class InDuty extends Component
         );
         return $textFields;
     }
+
+    public function setUsersInStaticPosition()
+    {
+        collect( self::STATIC_POSITIONS )->map(
+            function ( $posName ) {
+                return $this->formation[
+                    Position::where('name', $posName)
+                    ->first()->id] = User::ofRole($posName)->pluck('alias');
+            }
+        );
+    }
     
     public function render()
     {
         // check for today's report availability
-
-        
+        // dd($this->formation);        
         return view('livewire.in-duty');
     }
 
@@ -135,7 +147,7 @@ class InDuty extends Component
             $this->searchResult[$position] = [];
             return;
         }
-        $builder = User::ofRole('staff')->where('alias', 'like', "%{$this->textFields[$position]}%");
+        $builder = User::ofRole('exceptKaunit')->where('alias', 'like', "%{$this->textFields[$position]}%");
         $this->searchResult[$position] = $builder->take(10)
                 ->whereNotIn('alias', $this->haveBeenSelected)
                 ->get()

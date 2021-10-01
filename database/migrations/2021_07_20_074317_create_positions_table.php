@@ -16,7 +16,7 @@ class CreatePositionsTable extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('countAbsent')->default(true);
+            $table->boolean('count_absent')->default(true);
             $table->timestamps();
         });
     }

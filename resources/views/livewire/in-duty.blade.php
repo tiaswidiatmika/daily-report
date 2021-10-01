@@ -4,7 +4,6 @@
     class="main-page-container"
     wire:keydown.escape="clearResults()"
 >
-    {{-- {{ dd($this->formation) }} --}}
     
     @if ( $formationHasBeenSet )
 
@@ -27,8 +26,7 @@
             wire:keyup="search('{{ $fieldId }}')"
         >
         @if ( !empty($textFields[$fieldId]) )
-            
-            @if ( !empty($searchResult[$fieldId]) )
+            @if ( isset($searchResult[$fieldId]) )
                 <div class="searchResultContainer">
                     @foreach ($searchResult[$fieldId] as $item)
                         <div
@@ -39,8 +37,9 @@
                         </div>
                     @endforeach
                 </div>
+            @else
+                <span class="searchResultContainer">no user found</span>
             @endif
-            <span class="searchResultContainer">no user found</span>
         @endif    
             <div class="selection-container">
                 @foreach ($formation[$fieldId] as $alias)

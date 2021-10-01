@@ -1,19 +1,20 @@
-{{-- <style>
-    table, tr, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-</style> --}}
-
 @php
         use App\Models\{User, Position};
-        $total = User::all()->where('role', '!=', 'kaunit')->count();
-        $honorer = User::where('role', 'honorer')->pluck('name');
-        $opis = User::where('role', 'opis')->pluck('name');
-        $present = $attendees->flatten()->count() + $opis->count() + $honorer->count() + 1; // spv counted as 1
+        $exceptKaunit = User::ofRole('exceptKaunit')->get();
+        $total = $exceptKaunit->count();
+        $honorer = User::ofRole('honorer')->pluck('name');
+        $asistenSpv = User::ofRole('asisten_spv')->pluck('name');
+        $present = $attendees->flatten()->count();
         $absent = $absentees->flatten()->count();
-        $attendPos = Position::where('countAbsent', false)->get();
-        $absentPos = Position::where('countAbsent', true)->get();
+        $attendPos = Position::typePresent()->get()
+            ->whereNotIn('id', Position::exemptedFromReport());
+        $absentPos = Position::typeAbsent()->get();
+        
+        $notOnTheList = $exceptKaunit->pluck('id')
+            ->diff( $onTheList );
+        $notOnTheList = $notOnTheList->map( function( $id ) {
+            return User::find($id)->name;
+        } );
     @endphp
 
 <table class="text-center w-100percent">
@@ -21,7 +22,7 @@
         <td>
             <p>LAPORAN ABSENSI</p>
             <p>SEKSI PEMERIKSAAN IV</p>
-            <p>SELASA, 13 JULI 2021 PUKUL 05.00 - 14.00 WITA, TERMINAL KEBERANGKATAN</p>
+            <p>{{ $report->date }} PUKUL 05.00 - 14.00 WITA, TERMINAL KEBERANGKATAN</p>
             <hr>
         </td>
     </tr>
@@ -30,14 +31,14 @@
     <tr>
         <td>Supervisor</td>
         <td>:</td>
-        <td><ol><li>{{ User::where('role', 'spv')->pluck('name')->first() }}</li></ol></td>
+        <td><ol><li>{{ User::ofRole('spv')->pluck('name')->first() }}</li></ol></td>
     </tr>
     <tr>
         <td>Asst. Supervisor</td>
         <td>:</td>
         <td>
             <ol>
-        @foreach ($opis as $item)
+        @foreach ($asistenSpv as $item)
             <li>{{ $item }}</li>
         @endforeach
     </ol>
@@ -51,11 +52,15 @@
         <tr>
     @endif
             <td>
-                {{ ucwords(replaceUnderScore($position->name)) }} <br />
+                {{ ucwords(replaceUnderScore($position->name)) }}: <br />
                 <ol>
-                @foreach ($attendees[$position->id] as $item)
-                    <li>{{ $item->user->name }}</li>
-                @endforeach
+                    @if ( isset($attendees[$position->id]) )
+                        @foreach ($attendees[$position->id] as $item)
+                            <li>{{ $item->user->name }}</li>
+                        @endforeach
+                    @else
+                        <h3>—</h3>
+                    @endif
                 </ol>
             </td>
     @if ($loop->even)
@@ -75,7 +80,7 @@
 </table>
 <br>
 
-<table style="margin-bottom:8rem;">
+<table style="margin-bottom:8rem; margin-top:2rem;" class="w-100percent">
     <tr>
         {{-- left abssentees --}}
         <td>
@@ -103,7 +108,7 @@
         {{-- right abssentees --}}
         <td>
             <table>
-                <tr>Alasan tidak hadir:</tr>
+            
                 @foreach ($absentPos as $position)
                 <tr>
                     <td>{{ ucwords(replaceUnderScore($position->name)) }}</td>
@@ -129,4 +134,17 @@
             </table>
         </td>
     </tr>
+    @if ( $notOnTheList->isNotEmpty() )
+        <tr>
+            <td>
+                <h4>BELUM MASUK DALAM DAFTAR ABSENSI</h4>
+                <ol>
+                    @foreach ($notOnTheList as $item)
+                        <li style="color:red;">{{ $item }}</li>
+                    @endforeach
+                </ol>
+            </td>
+        </tr>
+    @endif
+        
 </table>

@@ -28,7 +28,7 @@
         use App\Models\{User, Position};
         $formation = json_decode( $formation, true );
         $positions = Position::all();
-        $totalUser = User::where('role', 'honorer')->count() + User::where('role', 'staff')->count() + User::where('role', 'opis')->count() + User::where('role', 'spv')->count();
+        $totalUser = User::where('role', 'honorer')->count() + User::where('role', 'staff')->count() + User::where('role', 'asisten_spv')->count() + User::where('role', 'spv')->count();
         $absent = 0;
         $present = 1; // initial 1, as spv already counted
         $honorer = User::where('role', 'honorer')->pluck('name');
@@ -40,10 +40,10 @@
     <h3>Asst. Spv</h3>
     <ol>
         @php
-            $opis = User::where('role', 'opis')->pluck('name');
-            $present += $opis->count();
+            $asistenSpv = User::where('role', 'asisten_spv')->pluck('name');
+            $present += $asistenSpv->count();
         @endphp
-        @foreach ($opis as $item)
+        @foreach ($asistenSpv as $item)
             <li>{{ $item }}</li>
         @endforeach
     </ol>
@@ -54,7 +54,7 @@
         @foreach ($formation as $formationKey => $collectionPerPosition)
             @if ( $position->id === $formationKey )
                 @php
-                    if ( $position->countAbsent ) {
+                    if ( $position->count_absent ) {
                         $absent += count( $collectionPerPosition );
                     } else {
                         $present += count( $collectionPerPosition );

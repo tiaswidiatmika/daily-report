@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
             'nip' => '19870303 200701 1 003'
         ]);
         User::factory()->count(3)->create([
-            'role' => 'opis'
+            'role' => 'asisten_spv'
         ]);
         User::factory()->count(5)->create();
 
