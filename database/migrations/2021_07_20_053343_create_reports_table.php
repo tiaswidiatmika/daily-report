@@ -16,7 +16,7 @@ class CreateReportsTable extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->string('date');
-            $table->boolean('build_completed')->default(false);
+            $table->boolean('is_complete')->default(false);
             $table->timestamps();
         });
     }

@@ -30,18 +30,19 @@ class InDuty extends Component
             $this->todaysReport = $report;
             $this->lastFormation( $report->id );
         } else {
-            $this->formation = $this->setTextFieldIds()->toArray();
+            $this->formation = $this->setTextFieldIds();
             $this->setUsersInStaticPosition();
         }
     }
     public function setTextFieldIds()
     {
-        $textFields = Position::get('id')->mapWithKeys(
+        // ! items contains array, so it can be versatile
+        // ! even though it contains  string
+        return Position::get('id')->mapWithKeys(
             function($item) {
                 return [ $item['id'] => [] ];
             }
-        );
-        return $textFields;
+        )->toArray();
     }
 
     public function setUsersInStaticPosition()
@@ -51,7 +52,7 @@ class InDuty extends Component
                 $users = User::ofRole($posName)->pluck('alias')->toArray();
                 $posId = Position::where('name', $posName)->first()->id;
                 $this->formation[$posId] = $users;
-                $this->haveBeenSelected += $users ;
+                $this->haveBeenSelected = array_merge($this->haveBeenSelected, $users) ;
             }
         );
     }
@@ -89,7 +90,7 @@ class InDuty extends Component
             }
         
         ksort($currentFormation);
-        $prepareFormation = $this->setTextFieldIds()->toArray();
+        $prepareFormation = $this->setTextFieldIds();
         // store last formation to new formation, based on their key
         foreach ($prepareFormation as $formationKey => $formationValue) {
             foreach ($currentFormation as $currentFormationKey => $currentFormationValue) {
@@ -150,7 +151,8 @@ class InDuty extends Component
         $this->searchResult[$position] = $builder->take(10)
                 ->whereNotIn('alias', $this->haveBeenSelected)
                 ->get()
-                ->pluck('alias');
+                ->pluck('alias')
+                ->toArray();
     }
 
     public function select( $fieldId, $alias )

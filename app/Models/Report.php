@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Report extends Model
 {
     use HasFactory;
-    protected $fillable = ['date'];
+    protected $fillable = ['date', 'is_complete'];
     protected $with = ['posts'];
 
     // relation to post
@@ -20,6 +20,13 @@ class Report extends Model
     public function formations()
     {
         return $this->hasMany(Formation::class);
+    }
+
+    public function complete()
+    {
+        $this->is_complete = true;
+        $this->save();
+        return $this;
     }
 
     public static function checkTodaysReport ()

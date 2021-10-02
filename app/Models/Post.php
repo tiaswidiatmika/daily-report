@@ -13,7 +13,7 @@ class Post extends Model
     use HasFactory;
     // use HasSlug;
 
-    protected $fillable = ['report_id', 'section', 'user_id','date', 'time', 'title', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'qrcode', 'is_in_report'];
+    protected $fillable = ['report_id', 'section', 'user_id','date', 'time', 'title', 'case', 'summary', 'chronology', 'measure', 'conclusion', 'qrcode', 'is_complete'];
     protected $with = ['attachments'];
 
 
@@ -33,6 +33,13 @@ class Post extends Model
     public function report()
     {
         return $this->belongsTo(Report::class);
+    }
+
+    public function complete()
+    {
+        $this->is_complete = true;
+        $this->save();
+        return $this;
     }
     
     // generate slugs

@@ -4,6 +4,7 @@
     class="main-page-container"
     wire:keydown.escape="clearResults()"
 >
+{{-- <pre>{{ var_dump($textFields) }}</pre> --}}
     @if ( $formationHasBeenSet )
         <a href="{{ route('presence-report') }}">Preview result</a>
     @endif
@@ -22,7 +23,7 @@
             wire:keyup="search('{{ $fieldId }}')"
         >
         @if ( !empty($textFields[$fieldId]) )
-            @if ( isset($searchResult[$fieldId]) )
+            @if ( !empty($searchResult[$fieldId]) )
                 <div class="searchResultContainer">
                     @foreach ($searchResult[$fieldId] as $item)
                         <div

@@ -46,7 +46,6 @@ class PresenceController extends Controller
 
         $exceptKaunit = User::ofRole('exceptKaunit')->get();
 
-
         $onTheList = $attendees->flatten()->pluck('user_id')
             ->merge($absentees->flatten()->pluck('user_id'));
 

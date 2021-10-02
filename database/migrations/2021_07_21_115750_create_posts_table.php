@@ -27,7 +27,7 @@ class CreatePostsTable extends Migration
             $table->text('measure');
             $table->text('conclusion');
             $table->string('qrcode')->nullable();
-            $table->boolean('is_in_report')->default(false);
+            $table->boolean('is_complete')->default(false);
             $table->timestamps();
         });
     }

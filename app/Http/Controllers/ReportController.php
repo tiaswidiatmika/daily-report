@@ -59,7 +59,7 @@ class ReportController extends Controller
 
     static public function getReport ( $specifiedDate = null )
     {
-        return Report::where('build_completed', false)
+        return Report::where('is_complete', false)
             ->orderByDesc('created_at')
             ->first();
     }
@@ -89,9 +89,20 @@ class ReportController extends Controller
         return view('report.composed-report', compact('posts', 'isStreamingPdf') + PresenceController::prepare());
     }
 
-    public function finish( Request $request )
+    public function finish( Request $request ): \Illuminate\Http\RedirectResponse
     {
-        dd($request->all());
+        Report::find($request->report)
+            ->with('posts')
+            ->first()
+            ->complete()
+            ->posts
+            ->whereIn('id', json_decode($request->posts))
+            ->map( function ( $post ) {
+                $post->complete();
+                }
+            );
+        session()->flash( 'formation-built', 'current report has successfully been assembled' );  
+        return redirect()->route('dashboard');
     }
     /**
      * Show the form for creating a new resource.
