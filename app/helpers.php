@@ -33,3 +33,9 @@ if ( !function_exists('replaceUnderScore') ) {
     }
 }
 
+if ( !function_exists('loggedUser') ) {
+    function loggedUser() {
+        return auth()->user()->load('subDivision.division.report');
+    }
+}
+

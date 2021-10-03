@@ -59,8 +59,17 @@ class ReportController extends Controller
 
     static public function getReport ( $specifiedDate = null )
     {
-        return Report::where('is_complete', false)
-            ->orderByDesc('created_at')
+        // dd(loggedUser()
+        // ->subDivision
+        // ->division
+        // ->report
+        // );
+        return loggedUser()
+            ->subDivision
+            ->division
+            ->report
+            ->where('is_complete', false)
+            ->sortByDesc('created_at')
             ->first();
     }
     private function sections ()
@@ -180,6 +189,12 @@ class ReportController extends Controller
     {
         return ReportController::assertReportStatus() ?
             ReportController::getReport() :
-            Report::create( ['date' => todayIs()->date] ) ;
+            loggedUser()
+                ->subDivision
+                ->division
+                ->report()
+                ->create( [
+                    'date' => todayIs()->date,
+                ] ) ;
     }
 }

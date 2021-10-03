@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Division;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Report extends Model
 {
@@ -20,6 +21,11 @@ class Report extends Model
     public function formations()
     {
         return $this->hasMany(Formation::class);
+    }
+
+    public function divisions()
+    {
+        return $this->belongsToMany( Division::class );
     }
 
     public function complete()

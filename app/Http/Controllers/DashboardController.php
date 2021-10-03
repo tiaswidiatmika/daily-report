@@ -9,7 +9,6 @@ class DashboardController extends Controller
 {
     public function index() {
         $todaysReportIsExist = ReportController::assertReportStatus();
-
         $todaysPostIsExist = $this->anyPostIsExist();
         // pass its value to build report button in dashboard view
         return view('dashboard', compact('todaysPostIsExist'));
@@ -27,7 +26,7 @@ class DashboardController extends Controller
     public function todaysReportIsExist( $reportIsExist )
     {
         return $reportIsExist ?
-            ReportController::getReport()
+        ReportController::getReport()
             ->posts()
             ->get()
             ->isNotEmpty() : false;
