@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Report extends Model
 {
     use HasFactory;
-    protected $fillable = ['date', 'is_complete'];
+    protected $fillable = ['date', 'is_complete', 'division_id'];
     protected $with = ['posts'];
 
     // relation to post

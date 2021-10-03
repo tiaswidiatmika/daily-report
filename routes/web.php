@@ -40,9 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // * persist newly created template
     Route::post('template/new', [TemplateController::class, 'store'])
         ->name('store-newly-created-template');
-    // // * use template to show post form
-    // Route::get('template/{id}/post/new', [TemplateController::class, 'createFromTemplate'] )
-    // ->name('use-template');
+        
     // * store post from existing template
     Route::post('template/{id}/post/new', [PostController::class, 'storeFromTemplate'])
     ->name('store-post-from-template');
