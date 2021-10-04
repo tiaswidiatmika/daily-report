@@ -152,19 +152,22 @@ class InDuty extends Component
 
     public function search( $position )
     {
-        $subDivId = $this->subDivision->id;
         if (empty($this->textFields[$position])) {
             $this->searchResult[$position] = [];
             return;
         }
-    
-        $builder = User::exceptKaunit( $subDivId )
-                    ->where('alias', 'like', "%{$this->textFields[$position]}%");
-        $this->searchResult[$position] = $builder->take(10)
-                ->whereNotIn('alias', $this->haveBeenSelected)
-                ->get()
-                ->pluck('alias')
-                ->toArray();
+        // filter alias that contains text field's string value
+        // stripos: if not found, it return false
+        // if found, returns its position
+        $result = $this->users
+                    ->filter( function ($user) use ($position) {
+                        return stripos($user->name, $this->textFields[$position]) !== false;
+                    } )
+                    ->pluck('alias')
+                    ->take(5)
+                    ->toArray();
+        $this->searchResult[$position] = array_diff($result, $this->haveBeenSelected); 
+        
     }
 
     public function select( $fieldId, $alias )
@@ -188,10 +191,10 @@ class InDuty extends Component
     
     public function clearResults()
     {
-        $this->textFields = $this->textFields->map(
+        $this->textFields = collect($this->textFields)->map(
             function( $item ) {
                 $item = '';
             }
-        );
+        )->toArray();
     }
 }
