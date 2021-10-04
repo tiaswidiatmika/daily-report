@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
@@ -87,7 +88,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // *
 // ! playground route
 
-// Route::get('playground', [ReportController::class, 'index']);
+Route::get('playground', function() {
+    $subDivId = loggedUser()->subDivision->id;
+    $all = loggedUser()->teammatesActive();
+        dd( $all );
+});
 // Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 //     return view('dashboard');
 // })->name('dashboard');

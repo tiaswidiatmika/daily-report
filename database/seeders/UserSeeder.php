@@ -26,38 +26,44 @@ class UserSeeder extends Seeder
             'remember_token' => Str::random(10),
         ])->assignRole('admin');
         
-        SubDivision::pluck('id')->map( function( $id ) {
+        
+        // create user per subdivision
+        // create kaunit per if subdivision id is odd
+        SubDivision::all()->map( function( $subDivision ) {
+
+            // kaunit
+            if ( $subDivision->id % 2 != 0 ) {
+                User::factory()->create([
+                    'sub_division_id' => $subDivision->id,
+                    'alias' => 'AGhazali',
+                    'name' => 'Ahmad Ghazali' . ' grup ' . $subDivision->division()->first()->name,
+                    'nip' => '19870303 200701 1 003'
+                ])->assignRole('kaunit');
+            }
+
             // spv
             User::factory()->count(1)->create([
-                'sub_division_id' => $id
+                'sub_division_id' => $subDivision->id
             ])->map( function( $user ) {
                 return $user->assignRole('spv');
             } );
             
             User::factory()->count(3)->create([
-                'sub_division_id' => $id
+                'sub_division_id' => $subDivision->id
             ])->map( function( $user ) {
                 return $user->assignRole('asisten_spv');
             } );
 
-            // kaunit
-            User::factory()->create([
-                'sub_division_id' => $id,
-                'alias' => 'AGhazali',
-                'name' => 'Ahmad Ghazali',
-                'nip' => '19870303 200701 1 003'
-            ])->assignRole('kaunit');
-
             // honorer
             User::factory()->count(4)->create([
-                'sub_division_id' => $id
+                'sub_division_id' => $subDivision->id
             ])->map( function( $user ) {
                 return $user->assignRole('honorer');
             } );
 
             // staff
             User::factory()->count(4)->create([
-                'sub_division_id' => $id
+                'sub_division_id' => $subDivision->id
             ])->map( function( $user ) {
                 return $user->assignRole('staff');
             } );

@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->boolean('active')->default(true);
             $table->foreignId('sub_division_id')->nullable();
             $table->string('name');
             $table->string('alias');

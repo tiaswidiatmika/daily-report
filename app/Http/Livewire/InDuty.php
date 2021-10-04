@@ -2,15 +2,14 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Report;
 use Livewire\Component;
-use App\Models\Position;
-use App\Models\{User, Formation};
+use App\Models\{Division, Formation, Position, Report, User};
 use App\Http\Controllers\ReportController;
 
 class InDuty extends Component
 {
-    public $users;
+    public $users = [];
+    public $subDivision;
     public $input;
     public $textFields;
     public $searchResult;
@@ -21,7 +20,7 @@ class InDuty extends Component
     const STATIC_POSITIONS = ['spv', 'asisten_spv', 'honorer'];
     public function mount()
     {
-        $this->users = User::all();
+        $this->retrieveUsersWithSameSubDivision(); // get users with same subdivision
         $this->textFields = $this->setTextFieldIds(); // contains text input value
         $this->searchResult = $this->setTextFieldIds(); // contains result of found user aliases
         $this->formationHasBeenSet = $this->hasFormationBeenSet();
@@ -33,6 +32,12 @@ class InDuty extends Component
             $this->formation = $this->setTextFieldIds();
             $this->setUsersInStaticPosition();
         }
+    
+    }
+
+    public function retrieveUsersWithSameSubDivision()
+    {
+        $this->users = loggedUser()->exceptKaunit()->with('roles')->where('active', true)->get();
     }
     public function setTextFieldIds()
     {
@@ -47,12 +52,16 @@ class InDuty extends Component
 
     public function setUsersInStaticPosition()
     {
+        $teammates = $this->users;
+        
         collect( self::STATIC_POSITIONS )->map(
-            function ( $posName ) {
-                $users = User::ofRole($posName)->pluck('alias')->toArray();
+            function ( $posName ) use ( $teammates) {
+                $userInThatPos = $teammates->filter( function( $user ) use ( $posName ) {
+                    return $user->hasRole( $posName );
+                } )->pluck('alias')->toArray();
                 $posId = Position::where('name', $posName)->first()->id;
-                $this->formation[$posId] = $users;
-                $this->haveBeenSelected = array_merge($this->haveBeenSelected, $users) ;
+                $this->formation[$posId] = $userInThatPos;
+                $this->haveBeenSelected = array_merge($this->haveBeenSelected, $userInThatPos) ;
             }
         );
     }
@@ -143,11 +152,14 @@ class InDuty extends Component
 
     public function search( $position )
     {
+        $subDivId = $this->subDivision->id;
         if (empty($this->textFields[$position])) {
             $this->searchResult[$position] = [];
             return;
         }
-        $builder = User::ofRole('exceptKaunit')->where('alias', 'like', "%{$this->textFields[$position]}%");
+    
+        $builder = User::exceptKaunit( $subDivId )
+                    ->where('alias', 'like', "%{$this->textFields[$position]}%");
         $this->searchResult[$position] = $builder->take(10)
                 ->whereNotIn('alias', $this->haveBeenSelected)
                 ->get()

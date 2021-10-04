@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -66,11 +67,22 @@ class User extends Authenticatable
         return $this->belongsTo( SubDivision::class);
     }
 
-    public function scopeOfRole($query, $type)
+    public function scopeActive()
     {
-        if ( $type == 'exceptKaunit' ) {
-            return $query->where('role', '!=', 'kaunit');
-        }
-        return $query->where('role', $type);
+        return $this->where('active', true);
+    }
+
+    public function scopeActiveTeammates()
+    {
+        $subDivId = $this->subDivision()->first()->id;
+        return $this->active()->where('sub_division_id', $subDivId);
+    }
+
+    public function scopeExceptKaunit()
+    {
+        $subDivId = $this->subDivision()->first()->id;
+        $role = Role::whereNotIn('name', ['kaunit'])->pluck('name');
+        return $this->where('sub_division_id', $subDivId)
+                ->role( $role );
     }
 }
