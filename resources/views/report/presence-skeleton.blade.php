@@ -1,13 +1,13 @@
 @php
         use App\Models\{User, Position};
         $total = $exceptKaunit->count();
-        $asistenSpv = User::ofRole('asisten_spv')->pluck('name');
+        $spv = teammatesWithRole($exceptKaunit, 'spv');
+        $asistenSpv = teammatesWithRole($exceptKaunit, 'asisten_spv');
         $present = $attendees->flatten()->count();
         $absent = $absentees->flatten()->count();
         $attendPos = Position::typePresent()->get()
             ->whereNotIn('id', Position::exemptedFromReport());
         $absentPos = Position::typeAbsent()->get();
-        
     @endphp
 
 <table class="text-center w-100percent">
@@ -24,17 +24,31 @@
     <tr>
         <td>Supervisor</td>
         <td>:</td>
-        <td><ol><li>{{ User::ofRole('spv')->pluck('name')->first() }}</li></ol></td>
+        <td>
+            <ol>
+                <li>
+                    @if ($spv->isNotEmpty())
+                        {{ $spv->first()->name }}
+                    @else
+                        —
+                    @endif
+                </li>
+            </ol>
+        </td>
     </tr>
     <tr>
         <td>Asst. Supervisor</td>
         <td>:</td>
         <td>
             <ol>
-        @foreach ($asistenSpv as $item)
-            <li>{{ $item }}</li>
-        @endforeach
-    </ol>
+                @if ($asistenSpv->isNotEmpty())
+                    @foreach ($asistenSpv as $item)
+                        <li>{{ $item->name }}</li>
+                    @endforeach
+                @else
+                    —
+                @endif
+            </ol>
         </td>
     </tr>
 </table>

@@ -1,5 +1,6 @@
 <?php
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 // build date and time for today
 if ( !function_exists('todayIs') ) {
@@ -36,6 +37,24 @@ if ( !function_exists('replaceUnderScore') ) {
 if ( !function_exists('loggedUser') ) {
     function loggedUser() {
         return auth()->user()->load('subDivision.division.report');
+    }
+}
+
+if ( !function_exists('teammatesWithRole') ) {
+    function teammatesWithRole( $teammates, $role ) {
+        return $teammates->filter( function ( $user ) use ( $role ) {
+            return $user->hasRole( $role );
+        } );
+    }
+}
+
+if ( !function_exists('rejectUsersInCollection') ) {
+    // reject collection, if its key contains something in array of keys
+    function rejectUsersInCollection( Collection $needles, string $key, Array $haystack ) {
+        return $needles->reject( function( $needle ) use ( $key, $haystack ) {
+            return in_array($needle[$key], $haystack);
+        } )->toArray();
+
     }
 }
 

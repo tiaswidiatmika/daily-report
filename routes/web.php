@@ -89,9 +89,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // ! playground route
 
 Route::get('playground', function() {
-    $subDivId = loggedUser()->subDivision->id;
-    $all = loggedUser()->teammatesActive();
-        dd( $all );
+    $haystack = [1,2,3,4,5];
+    $needle = 3;
+    dd( in_array($needle, $haystack) );
 });
 // Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 //     return view('dashboard');

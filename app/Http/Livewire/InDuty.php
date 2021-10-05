@@ -8,15 +8,13 @@ use App\Http\Controllers\ReportController;
 
 class InDuty extends Component
 {
+    public $report;
     public $users = [];
-    public $subDivision;
-    public $input;
     public $textFields;
     public $searchResult;
     public $formation;
     public $formationHasBeenSet = false;
     public $haveBeenSelected = [];
-    public $todaysReport;
     const STATIC_POSITIONS = ['spv', 'asisten_spv', 'honorer'];
     public function mount()
     {
@@ -25,9 +23,8 @@ class InDuty extends Component
         $this->searchResult = $this->setTextFieldIds(); // contains result of found user aliases
         $this->formationHasBeenSet = $this->hasFormationBeenSet();
         if ( $this->formationHasBeenSet ) {
-            $report = ReportController::getReport();
-            $this->todaysReport = $report;
-            $this->lastFormation( $report->id );
+            $this->report = ReportController::getReport();
+            $this->lastFormation();
         } else {
             $this->formation = $this->setTextFieldIds();
             $this->setUsersInStaticPosition();
@@ -53,15 +50,15 @@ class InDuty extends Component
     public function setUsersInStaticPosition()
     {
         $teammates = $this->users;
-        
+
         collect( self::STATIC_POSITIONS )->map(
             function ( $posName ) use ( $teammates) {
-                $userInThatPos = $teammates->filter( function( $user ) use ( $posName ) {
+                $usersInThatPos = $teammates->filter( function( $user ) use ( $posName ) {
                     return $user->hasRole( $posName );
-                } )->pluck('alias')->toArray();
+                } )->toArray();
                 $posId = Position::where('name', $posName)->first()->id;
-                $this->formation[$posId] = $userInThatPos;
-                $this->haveBeenSelected = array_merge($this->haveBeenSelected, $userInThatPos) ;
+                $this->formation[$posId] = $usersInThatPos;
+                $this->haveBeenSelected = array_merge($this->haveBeenSelected, $usersInThatPos) ;
             }
         );
     }
@@ -75,45 +72,23 @@ class InDuty extends Component
     {
         // if there are report
         $report = ReportController::getReport();
-
-        if ( $report !== null ) {
-            $checkLastFormation = Formation::where('report_id', $report->id)->get();
-            if ( $checkLastFormation->isNotEmpty() ) {
-                return true;
-            }
-        }
+        if ( $report !== null ) return $report->formations()->get()->isNotEmpty() ;
         return false;
     }
-    public function lastFormation( $reportId  )
+    public function lastFormation()
     {
         // else, get today's formation
-        $currentFormation = Formation::where('report_id', $reportId)
-            ->get()
-            ->groupBy('position_id')
-            ->toArray();
-        
-            foreach ($currentFormation as $positionId => $values) {
-                foreach ($values as $key => $element) {
-                    $currentFormation[$positionId][$key] = User::find($element['user_id'])->alias;
-                }
-            }
-        
-        ksort($currentFormation);
-        $prepareFormation = $this->setTextFieldIds();
-        // store last formation to new formation, based on their key
-        foreach ($prepareFormation as $formationKey => $formationValue) {
-            foreach ($currentFormation as $currentFormationKey => $currentFormationValue) {
-                if ($currentFormationKey === $formationKey) {
-                    $prepareFormation[$currentFormationKey] = $currentFormationValue;
-                    // e.g. $currentFormationValue = array:2 [▼ 0 => "Banawi", 1 => "Fitriani"]
-                    foreach ($currentFormationValue as $alias) {
-                        // push to has been selected
-                        $this->haveBeenSelected[] = $alias;
-                    }
-                }
-            }
-        }
-        $this->formation = $prepareFormation;
+        $formations = $this->report->formations()->get()->groupBy('position_id');
+        // prepare formation
+        $this->formation = $this->setTextFieldIds();
+
+        $formations->each( function( $formationPerPosition, $positionId ) {
+            $formationPerPosition->map( function( $formation ) use ( $positionId ) {
+                $user = $formation->user()->first();
+                $this->formation[$positionId] = array_merge( $this->formation[$positionId], [$user] );
+                $this->haveBeenSelected = array_merge($this->haveBeenSelected, [$user]) ;
+            } );
+        });
     }
 
     public function submit()
@@ -122,18 +97,16 @@ class InDuty extends Component
         if ( $this->hasFormationBeenSet() ) {
             $this->destroyPreviousFormation();
         }
-
         // check last report build status
         // check for todays report availability, if not exist, create one
         $report = ReportController::firstOrCreate();
         // if there is formation for today delete the
-        $arrangeFormation = $this->formation;
-        foreach ($arrangeFormation as $key => $values) {
-            foreach ($values as $value) {
-                Formation::create([
-                    'report_id' => $report->id,
-                    'position_id' => $key,
-                    'user_id' => User::where('alias', $value)->first()->id
+        
+        foreach ($this->formation as $positionId => $formationItems) {
+            foreach ($formationItems as $user) {
+                $report->formations()->create([
+                    'position_id' => $positionId,
+                    'user_id' => $user['id'],
                 ]);
             }
         }
@@ -144,10 +117,7 @@ class InDuty extends Component
 
     public function destroyPreviousFormation()
     {
-        $report = $this->todaysReport;
-        $formationIds = Formation::where('report_id', $report->id)->get()->pluck('id');
-        // e.g. $formationIds is a collection of [8,9,10,11]
-        Formation::destroy( $formationIds );
+        $this->report->formations()->delete();
     }
 
     public function search( $position )
@@ -156,37 +126,37 @@ class InDuty extends Component
             $this->searchResult[$position] = [];
             return;
         }
+
+        $selectedUsersId = collect($this->haveBeenSelected)->groupBy('id')->keys()->toArray();
         // filter alias that contains text field's string value
         // stripos: if not found, it return false
         // if found, returns its position
         $result = $this->users
                     ->filter( function ($user) use ($position) {
                         return stripos($user->name, $this->textFields[$position]) !== false;
-                    } )
-                    ->pluck('alias')
-                    ->take(5)
-                    ->toArray();
-        $this->searchResult[$position] = array_diff($result, $this->haveBeenSelected); 
+                    } )->take(5);
+        $this->searchResult[$position] = rejectUsersInCollection( $result, 'id', $selectedUsersId );
         
     }
 
-    public function select( $fieldId, $alias )
+    public function select( $fieldId, $userId )
     {
+        $user = User::find($userId);
         // push one new item on array to respective field name
-        $this->formation[$fieldId][] = $alias;
+        $this->formation[$fieldId][] = $user;
         // clears input field, search result
         $this->textFields[$fieldId] = '';
         $this->searchResult[$fieldId] = '';
-
         // push new item to $this->haveBeenSelected to prevent duplicate entry
-        array_push( $this->haveBeenSelected, $alias );
+        array_push( $this->haveBeenSelected, $user );
     }
 
-    public function remove( $fieldName, $needle )
+    public function remove( $fieldName, $userId )
     {
-        $hayStack = $this->formation[$fieldName];
-        $this->formation[$fieldName] = array_diff( $hayStack, [$needle] );
-        $this->haveBeenSelected = array_diff( $this->haveBeenSelected, [$needle] );
+        $hayStack = collect( $this->formation[$fieldName] );
+        
+        $this->formation[$fieldName] = rejectUsersInCollection( $hayStack, 'id', [$userId] );
+        $this->haveBeenSelected = rejectUsersInCollection( collect($this->haveBeenSelected), 'id', [$userId] );
     }
     
     public function clearResults()

@@ -4,7 +4,7 @@
     class="main-page-container"
     wire:keydown.escape="clearResults()"
 >
-{{-- <pre>{{ var_dump($textFields) }}</pre> --}}
+
     @if ( $formationHasBeenSet )
         <a href="{{ route('presence-report') }}">Preview result</a>
     @endif
@@ -25,12 +25,12 @@
         @if ( !empty($textFields[$fieldId]) )
             @if ( !empty($searchResult[$fieldId]) )
                 <div class="searchResultContainer">
-                    @foreach ($searchResult[$fieldId] as $item)
+                    @foreach ($searchResult[$fieldId] as $user)
                         <div
                             class="searchResult"
-                            wire:click="select('{{ $fieldId }}', '{{ $item }}')"
+                            wire:click="select('{{ $fieldId }}', '{{ $user['id'] }}')"
                         >
-                            {{ $item}}
+                            {{ $user['alias'] }}
                         </div>
                     @endforeach
                 </div>
@@ -39,12 +39,12 @@
             @endif
         @endif    
             <div class="selection-container">
-                @foreach ($formation[$fieldId] as $alias)
+                @foreach ($formation[$fieldId] as $user)
                     <span class="selection">
-                        {{ $alias }}
+                        {{ $user['alias'] }}
                         <button
                             class="remove-selection"
-                            wire:click.prevent="remove('{{ $fieldId }}', '{{ $alias}}')">&times;</button>
+                            wire:click.prevent="remove('{{ $fieldId }}', '{{ $user['id'] }}')">&times;</button>
                     </span>
                 @endforeach
             </div>

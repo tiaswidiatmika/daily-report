@@ -44,8 +44,8 @@ class PresenceController extends Controller
         $attendees = $formations->whereIn('position_id', $typePresent)->groupBy('position_id');
         $absentees =  $formations->whereNotIn('position_id', $typePresent)->groupBy('position_id');
 
-        $exceptKaunit = User::ofRole('exceptKaunit')->get();
-
+        $exceptKaunit = loggedUser()->exceptKaunit()->get();
+        
         $onTheList = $attendees->flatten()->pluck('user_id')
             ->merge($absentees->flatten()->pluck('user_id'));
 
