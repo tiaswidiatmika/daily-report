@@ -15,6 +15,7 @@ class CreatePostsTable extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->boolean('is_complete')->default(false);
             $table->foreignId('report_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
@@ -27,7 +28,6 @@ class CreatePostsTable extends Migration
             $table->text('measure');
             $table->text('conclusion');
             $table->string('qrcode')->nullable();
-            $table->boolean('is_complete')->default(false);
             $table->timestamps();
         });
     }

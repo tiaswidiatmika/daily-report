@@ -20,11 +20,16 @@ class ReportController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function __construct() {
-        $this->report = ReportController::getReport();
+        $this->middleware(function ($request, $next) {
+            $this->user = loggedUser();
+            $this->report = ReportController::getReport();
+            return $next($request);
+        });
     }
 
     public function index ()
     {
+        // sections can be added, like: laporan anu, laporan gitu, laporan blabla. can be dynamically added
         $sections = $this->sections();
         $report = $this->report;
         $reportSections = $this->getReportSkeleton( $sections );
@@ -33,7 +38,7 @@ class ReportController extends Controller
 
     public function build()
     {   
-        $report = Report::today(); 
+        $report = Report::today();
         $posts = $report->posts ?? collect();
         return view( 'todays-post', compact( 'report', 'posts' ) );
 
@@ -48,30 +53,16 @@ class ReportController extends Controller
         return $report;
     }
 
-    private function getReportSkeleton( Array $relations )
+    private function getReportSkeleton( Array $dailyReportSections )
     {
         $skeleton = array();
-        foreach ($relations as $relation) {
-            $skeleton[$relation] = $this->getRelatedModel($relation);
+        foreach ($dailyReportSections as $section) {
+            $skeleton[$section] = $this->getRelatedModel($section);
         }
         return $skeleton;
     }
 
-    static public function getReport ( $specifiedDate = null )
-    {
-        // dd(loggedUser()
-        // ->subDivision
-        // ->division
-        // ->report
-        // );
-        return loggedUser()
-            ->subDivision
-            ->division
-            ->report
-            ->where('is_complete', false)
-            ->sortByDesc('created_at')
-            ->first();
-    }
+    
     private function sections ()
     {
         // now there are only two sections
@@ -100,16 +91,13 @@ class ReportController extends Controller
 
     public function finish( Request $request ): \Illuminate\Http\RedirectResponse
     {
-        Report::find($request->report)
-            ->with('posts')
-            ->first()
+        Report::with('posts')
+            ->find($request->report)
             ->complete()
             ->posts
             ->whereIn('id', json_decode($request->posts))
-            ->map( function ( $post ) {
-                $post->complete();
-                }
-            );
+            ->map( function ( $post ) { $post->complete(); } );
+
         session()->flash( 'formation-built', 'current report has successfully been assembled' );  
         return redirect()->route('dashboard');
     }
@@ -177,6 +165,17 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         //
+    }
+
+    static public function getReport ( $specifiedDate = null )
+    {
+        return loggedUser()
+            ->subDivision
+            ->division
+            ->report
+            ->where('is_complete', false)
+            ->sortByDesc('created_at')
+            ->first();
     }
 
     public static function assertReportStatus()
