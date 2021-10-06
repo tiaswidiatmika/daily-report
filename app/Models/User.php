@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Post;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -28,10 +29,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'sub_division_id',
         'alias',
         'email',
         'password',
     ];
+
+    protected $with = ['subDivision.division'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -67,6 +71,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo( SubDivision::class);
     }
+
+    public function posts()
+    {
+        return $this->hasMany( Post::class );
+    }
+
 
     public function scopeActive()
     {

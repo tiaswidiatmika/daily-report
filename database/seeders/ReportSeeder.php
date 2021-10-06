@@ -14,9 +14,8 @@ class ReportSeeder extends Seeder
      */
     public function run()
     {
-        Report::create([
-            'date' => todayIs()->date,
-            'division_id' => 1,
-        ]);
+        if ( Report::all()->isEmpty() ) {
+            Report::factory()->count(10)->create();
+        }
     }
 }

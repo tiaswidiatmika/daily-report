@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Report extends Model
 {
     use HasFactory;
-    protected $fillable = ['date', 'is_complete', 'division_id'];
-    protected $with = ['posts'];
+    protected $fillable = ['shift_id', 'date', 'is_complete', 'division_id'];
+    protected $with = ['posts', 'formations', 'division', 'shift'];
 
     // relation to post
     public function posts()
@@ -23,9 +23,14 @@ class Report extends Model
         return $this->hasMany(Formation::class);
     }
 
-    public function divisions()
+    public function division()
     {
-        return $this->belongsToMany( Division::class );
+        return $this->belongsTo( Division::class );
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo( Shift::class );
     }
 
     public function complete()

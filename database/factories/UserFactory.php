@@ -4,9 +4,10 @@ namespace Database\Factories;
 
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\SubDivision;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
 {
@@ -26,8 +27,10 @@ class UserFactory extends Factory
     {
         $firstName = $this->faker->firstName();
         $lastName = $this->faker->lastName();
+        $subDivision = array_rand( SubDivision::all()->keyBy('id')->toArray() );
         return [
             'alias' => $firstName,
+            'sub_division_id' => $subDivision,
             'name' => $firstName . ' ' . $lastName,
             'nip' => $this->faker->isbn13(),
             'email' => $this->faker->unique()->safeEmail(),

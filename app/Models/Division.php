@@ -26,6 +26,11 @@ class Division extends Model
 
     public function report() 
     {
-        return $this->belongsToMany( Report::class );
+        return $this->hasMany( Report::class );
+    }
+
+    public function users()
+    {
+        return $this->hasManyThrough( User::class, SubDivision::class);
     }
 }

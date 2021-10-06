@@ -15,8 +15,10 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('date');
             $table->boolean('is_complete')->default(false);
+            $table->foreignId('shift_id')->default(1)->constrained()->onDelete('cascade');
+            $table->foreignId('division_id')->constrained()->onDelete('cascade');
+            $table->string('date');
             $table->timestamps();
         });
     }

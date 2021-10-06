@@ -150,6 +150,11 @@
         @if ($isStreamingPdf)
             <tr><td class="text-center"><img class="max-w-80percent block text-center margin-top-2" src='attachments/{{ $item->path }}' alt="" srcset=""> </td></tr>
         @else
+            @if ( !isset($renderedFromSeeder) )
+                <tr>
+                    <td class="text-center"><img class="max-w-80percent block text-center margin-top-2" src='{{ $item->path }}' alt="" srcset=""></td>
+                </tr>
+            @endif
             <tr><td class="text-center"><img class="max-w-80percent block text-center margin-top-2" src='/attachments/{{ $item->path }}' alt="" srcset=""> </td></tr>
         @endif
     @endforeach

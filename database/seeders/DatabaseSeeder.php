@@ -13,14 +13,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // relationship 1: shift->report->post->attachment
+        // relationship 2: user->subDivision->division->report->shift
+        // template seeder will be called as initial template
         $this->call([
-            PermissionSeeder::class,
-            UserSeeder::class,
+            PermissionSeeder::class, 
+            UserTestSeeder::class, // seed db with users, their teammates, reports, and posts
             // ReportSeeder::class,
             TemplateSeeder::class,
             // PostSeeder::class,
-            PositionSeeder::class,
+            PositionSeeder::class, 
         ]);
     }
 }
