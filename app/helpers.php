@@ -36,10 +36,12 @@ if ( !function_exists('replaceUnderScore') ) {
 
 if ( !function_exists('loggedUser') ) {
     function loggedUser() {
-        return auth()->user()->load('subDivision.division.report');
+        return auth()->user()->load('subDivision.division');
     }
 }
 
+// usage : $spv = teammatesWithRole($exceptKaunit, 'spv')->first();
+// usage : $kaunit = teammatesWithRole( loggedUser()->subDivision->division->users, 'kaunit' )->first();
 if ( !function_exists('teammatesWithRole') ) {
     function teammatesWithRole( $teammates, $role ) {
         return $teammates->filter( function ( $user ) use ( $role ) {

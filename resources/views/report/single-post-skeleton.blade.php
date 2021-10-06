@@ -127,7 +127,7 @@
         <img class="block" src='/qrcode/{{ $post->qrcode }}' alt="" style="width: 100px;"><br>
     @endif
     @php
-        $kaunit = \App\Models\User::where('role', 'kaunit')->first();
+        $kaunit = teammatesWithRole( $post->report->division->users, 'kaunit' )->first();
     @endphp
     {{ $kaunit->name }} <br />
     NIP. {{ $kaunit->nip }} <br />
