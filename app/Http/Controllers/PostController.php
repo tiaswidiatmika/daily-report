@@ -115,14 +115,11 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::find( $id );
-        // return view('single-report', [
-        //     'post' => $post,
-        //     'qr' => $this->buildQrCode( $id ),
-        //     'attachment' => $post->attachments()
-        //         ->where('post_id', '=', $post->id)
-        //         ->get(),
-        // ]);
+        try {
+            $post = Post::findOrFail( $id );
+        } catch (ModelNotFoundException $e) {
+            return back()->withError($exception->getMessage());
+        }
         $isStreamingPdf = false;
         return view('report.single-post', compact('post', 'isStreamingPdf'));
     }
