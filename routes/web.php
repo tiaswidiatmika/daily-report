@@ -3,10 +3,12 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Livewire\Shift;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +83,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->name('create-presence');
     Route::get('presence-report', [PresenceController::class, 'show'])
         ->name('presence-report');
+        
+        // * only admins
+        // Route::get('shift/create', [ShiftController::class, 'create'])->name('shift-create');
+    // Route::post('shift/store', [ShiftController::class, 'store'])->name('shift-store');
+    // Route::get('shift/edit/{shift}', [ShiftController::class, 'edit'])->name('shift-edit');
+    // Route::post('shift/update/{shift}', [ShiftController::class, 'update'])->name('shift-update');
+    // Route::get('shift/destroy/{shift}', [ShiftController::class, 'destroy'])->name('shift-destroy');
 });
+Route::view('shift', 'shift');
 
 // Route::get('presen', [PresenceController::class, 'showNewlyCreated'])
 //     ->name('show-newly-created-formation');
